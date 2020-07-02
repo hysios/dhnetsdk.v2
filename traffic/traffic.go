@@ -8,7 +8,7 @@ import (
 	"time"
 	"unsafe"
 
-	"github.com/hysios/dhnetsdk/netsdk"
+	"github.com/hysios/dhnetsdk.v2/netsdk"
 	"github.com/yudai/pp"
 )
 

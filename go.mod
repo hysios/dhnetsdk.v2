@@ -1,4 +1,4 @@
-module github.com/hysios/dhnetsdk
+module github.com/hysios/dhnetsdk.v2
 
 go 1.14
 
