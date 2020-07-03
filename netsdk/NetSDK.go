@@ -637,3 +637,7 @@ func SetOptimizeMode(emType EM_OPTIMIZE_TYPE, pParam unsafe.Pointer) bool {
 	}
 	return true
 }
+
+func StrZ(addr uintptr) string {
+	return C.GoString((*C.char)(unsafe.Pointer(addr)))
+}
