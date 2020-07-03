@@ -1,2 +1,6 @@
 bin/
 *.jpg
+.venv/
+.env
+images/
+.ipynb_checkpoints/

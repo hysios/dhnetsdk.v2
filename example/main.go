@@ -1,10 +1,12 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/hysios/dhnetsdk.v2/netsdk"
@@ -38,7 +40,8 @@ func main() {
 
 					fmt.Printf("%s, %d\n", netsdk.Str(info.ST_stuObject.ST_szObjectType[:]), info.ST_stuObject.ST_nObjectID)
 					fmt.Printf("frame size %d\n", len(frame))
-					globalfilename := fmt.Sprintf("%04d%02d%02d-%02d%02d%02d%04d-%d_%s",
+					fmt.Printf("info %#v\n", info)
+					globalfilename := fmt.Sprintf("images/%04d%02d%02d-%02d%02d%02d%04d-%d_%s",
 						info.ST_UTC.ST_dwYear,
 						info.ST_UTC.ST_dwMonth,
 						info.ST_UTC.ST_dwDay,
@@ -56,6 +59,8 @@ func main() {
 
 					n, err := file.Write(frame)
 					_ = n
+					jsonfile := strings.TrimSuffix(globalfilename, "jpg") + ".json"
+					saveJson(jsonfile, info)
 					fmt.Println("globalfilename-----", globalfilename)
 				}
 			}
@@ -66,6 +71,16 @@ func main() {
 	for {
 		time.Sleep(1 * time.Second)
 	}
+}
+
+func saveJson(filename string, info *netsdk.DEV_EVENT_TRAFFIC_PARKING_INFO) error {
+	f, err := os.OpenFile(filename, os.O_CREATE|os.O_WRONLY, 06666)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	enc := json.NewEncoder(f)
+	return enc.Encode(info)
 }
 
 func searchAllClients(search *netsdk.Search) error {
