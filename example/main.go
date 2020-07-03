@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"os"
 	"time"
 
 	"github.com/hysios/dhnetsdk.v2/netsdk"
@@ -36,6 +37,26 @@ func main() {
 				if info, ok := alarmInfo.(*netsdk.DEV_EVENT_TRAFFIC_PARKING_INFO); ok {
 
 					fmt.Printf("%s, %d\n", netsdk.Str(info.ST_stuObject.ST_szObjectType[:]), info.ST_stuObject.ST_nObjectID)
+					fmt.Printf("frame size %d\n", len(frame))
+					globalfilename := fmt.Sprintf("%04d%02d%02d-%02d%02d%02d%04d-%d_%s",
+						info.ST_UTC.ST_dwYear,
+						info.ST_UTC.ST_dwMonth,
+						info.ST_UTC.ST_dwDay,
+						info.ST_UTC.ST_dwHour,
+						info.ST_UTC.ST_dwMinute,
+						info.ST_UTC.ST_dwSecond,
+						info.ST_UTC.ST_dwMillisecond,
+						info.ST_stuObject.ST_nObjectID,
+						"big.jpg")
+					file, err := os.OpenFile(globalfilename, os.O_CREATE|os.O_WRONLY, 0666)
+					if err != nil {
+						fmt.Println("Error OpenFile ")
+					}
+					defer file.Close()
+
+					n, err := file.Write(frame)
+					_ = n
+					fmt.Println("globalfilename-----", globalfilename)
 				}
 			}
 			return 0

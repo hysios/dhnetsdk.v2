@@ -124,7 +124,7 @@ type PictureVisitor struct {
 }
 
 //export export_fAnalyzerDataCallBack2
-func export_fAnalyzerDataCallBack2(lAnalyzerHandle C.long, dwAlarmType C.uint, pAlarmInfo C.long, pBuffer C.long, dwBufSize C.uint, dwUser C.long, nSequence C.int, reserved C.long) int32 {
+func export_fAnalyzerDataCallBack2(lAnalyzerHandle C.long, dwAlarmType C.uint, pAlarmInfo C.long, pBuffer C.long, dwBufSize C.DWORD, dwUser C.long, nSequence C.int, reserved C.long) int32 {
 	log.Println("Enter fAnalyzerDataCallBack...")
 
 	p := pointer.Restore(unsafe.Pointer(uintptr(dwUser)))
@@ -139,7 +139,12 @@ func export_fAnalyzerDataCallBack2(lAnalyzerHandle C.long, dwAlarmType C.uint, p
 	switch EVENT_IVS(dwAlarmType) {
 	case EVENT_IVS_TRAFFIC_PARKING:
 		alarmType := (*DEV_EVENT_TRAFFIC_PARKING_INFO)(unsafe.Pointer(uintptr(pAlarmInfo)))
-		buf := C.GoBytes(unsafe.Pointer(&pBuffer), C.int(dwBufSize))
+		var buf []byte
+		data := (*reflect.SliceHeader)(unsafe.Pointer(&buf))
+		data.Data = uintptr(unsafe.Pointer(uintptr(pBuffer)))
+		data.Len = int(dwBufSize)
+		data.Cap = int(dwBufSize)
+
 		visitor.Callback(visitor.Client, EventIvs(dwAlarmType), alarmType, buf, int(nSequence))
 	}
 

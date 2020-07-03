@@ -120,6 +120,30 @@ func TestfAnalyzerDataCallBack(lAnalyzerHandle netsdk.LLONG, dwAlarmType netsdk.
 		fmt.Println("GroupID-----------", alarmInfo.ST_stuFileInfo.ST_nGroupId)
 		pp.Printf("alarminfo %v", alarmInfo)
 		log.Printf("car %#v", alarmInfo.ST_stTrafficCar)
+
+		globalfilename := fmt.Sprintf("%04d%02d%02d-%02d%02d%02d%04d-%d_%s",
+			alarmInfo.ST_UTC.ST_dwYear,
+			alarmInfo.ST_UTC.ST_dwMonth,
+			alarmInfo.ST_UTC.ST_dwDay,
+			alarmInfo.ST_UTC.ST_dwHour,
+			alarmInfo.ST_UTC.ST_dwMinute,
+			alarmInfo.ST_UTC.ST_dwSecond,
+			alarmInfo.ST_UTC.ST_dwMillisecond,
+			alarmInfo.ST_stuObject.ST_nObjectID,
+			"big.jpg")
+		file, err := os.OpenFile(globalfilename, os.O_CREATE|os.O_WRONLY, 0666)
+		if err != nil {
+			fmt.Println("Error OpenFile ")
+		}
+		defer file.Close()
+		var buf []byte
+		data := (*reflect.SliceHeader)(unsafe.Pointer(&buf))
+		data.Data = uintptr(unsafe.Pointer(uintptr(pBuffer)))
+		data.Len = int(dwBufSize)
+		data.Cap = int(dwBufSize)
+		n, err := file.Write(buf)
+		_ = n
+		fmt.Println("globalfilename----", globalfilename)
 	default:
 		fmt.Println("dwAlarmType:", dwAlarmType)
 	}
