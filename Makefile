@@ -8,7 +8,8 @@ build:
 	@go build -o bin/example ./example
 
 sync:
-	@scp bin/dahuanet-linux devserver2:~/dahuasdk
+	@scp bin/example devserver2:~/netsdk/bin
+	@scp bin/traffic devserver2:~/netsdk/bin
 	
 dbuild:
 	@docker build -t dahua-netsdk2:dev .

@@ -143,9 +143,6 @@ func export_fAnalyzerDataCallBack2(lAnalyzerHandle C.long, dwAlarmType C.uint, p
 		visitor.Callback(visitor.Client, EventIvs(dwAlarmType), alarmType, buf, int(nSequence))
 	}
 
-	// (*cb)(LLONG(lAnalyzerHandle), DWORD(dwAlarmType), LLONG(pAlarmInfo), LLONG(pBuffer),
-	// 	DWORD(dwBufSize), LLONG(dwUser), int32(nSequence), LLONG(reserved))
-
 	return 1
 }
 
@@ -158,8 +155,18 @@ func export_fSearchDevicesCBEx(lSearchHandle C.long, pDevNetInfo *C.struct_tagDE
 	//	log.Println("Enter export_fSearchDevicesCBEx...")
 	var cb *IF_fSearchDevicesCBEx = (*IF_fSearchDevicesCBEx)(unsafe.Pointer(&pUserData))
 	(*cb).Invoke(LLONG(lSearchHandle), (*DEVICE_NET_INFO_EX2)(unsafe.Pointer(pDevNetInfo)))
-
 }
+
+// //export export_fSearchDevicesCBEx2
+// func export_fSearchDevicesCBEx2(lSearchHandle C.long, pDevNetInfo *C.struct_tagDEVICE_NET_INFO_EX2, pUserData C.long) {
+// 	var user_data = unsafe.Pointer(uintptr(pUserData))
+// 	if v, ok := pointer.Restore(user_data).(SearchVisitor); ok {
+// 		if v.Callback != nil {
+// 			devinfo := (*DEVICE_NET_INFO_EX2)(unsafe.Pointer(pDevNetInfo))
+// 			v.Callback(v.Search, &devinfo.ST_stuDevInfo)
+// 		}
+// 	}
+// }
 
 type IF_fSnapRev interface {
 	Invoke(lLoginID int, pBuf []byte, EncodeType uint, CmdSerial uint)

@@ -31,8 +31,8 @@ type Client struct {
 	LoginID int
 
 	realloadHandle int64
-
-	DeviceInfo NET_DEVICEINFO_Ex
+	subscribP      unsafe.Pointer
+	DeviceInfo     NET_DEVICEINFO_Ex
 }
 
 func Init(cb DisconnectFunc) error {
@@ -117,8 +117,18 @@ func (client *Client) RealLoadPictureEx(channel int, evt EventIvs, callback Pict
 		return errors.New("can't realloadPicture")
 	}
 
+	client.subscribP = p
 	log.Println("lAnalyzerHandle=", lAnalyzerHandle)
 	client.realloadHandle = LLONG(lAnalyzerHandle)
 
 	return nil
+}
+
+func (client *Client) StopLoadPic() bool {
+	if client.realloadHandle == 0 {
+		return false
+	}
+
+	pointer.Unref(client.subscribP)
+	return StopLoadPic(client.realloadHandle)
 }
