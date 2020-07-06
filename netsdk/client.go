@@ -52,12 +52,16 @@ func NewClient() *Client {
 	return &Client{}
 }
 
-func Login(addr string, user, pass string) (ncli *Client, err error) {
+func Login(addr string, user, pass string, opts ...LogOptionFunc) (ncli *Client, err error) {
 	var (
 		port     int
 		inParam  NET_IN_LOGIN_WITH_HIGHLEVEL_SECURITY
 		outParam NET_OUT_LOGIN_WITH_HIGHLEVEL_SECURITY
 	)
+
+	for _, opt := range opts {
+		opt(&inParam)
+	}
 
 	addrs := strings.SplitN(addr, ":", 2)
 	if len(addrs) == 2 {
@@ -80,6 +84,39 @@ func Login(addr string, user, pass string) (ncli *Client, err error) {
 		DeviceInfo: outParam.ST_stDeviceInfo,
 	}
 	return ncli, nil
+}
+
+type LogOptionFunc func(inparam *NET_IN_LOGIN_WITH_HIGHLEVEL_SECURITY)
+
+// stLoginIn := netsdk.NET_IN_LOGIN_WITH_HIGHLEVEL_SECURITY{}
+// stLoginIn.ST_dwSize = (uint32)(unsafe.Sizeof(netsdk.NET_IN_LOGIN_WITH_HIGHLEVEL_SECURITY{}))
+// copy(stLoginIn.ST_szIP[:], []byte(ip)[:])
+// stLoginIn.ST_nPort = int32(port)
+// copy(stLoginIn.ST_szUserName[:], []byte(user)[:])
+// copy(stLoginIn.ST_szPassword[:], []byte(pswd)[:])
+// stLoginIn.ST_emSpecCap = netsdk.EM_LOGIN_SPEC_CAP_SERVER_CONN
+// snCS := C.CString(sn)
+// stLoginIn.ST_pCapParam = uintptr(unsafe.Pointer(snCS))
+
+// stLoginOut := netsdk.NET_OUT_LOGIN_WITH_HIGHLEVEL_SECURITY{}
+// stLoginOut.ST_dwSize = (uint32)(unsafe.Sizeof(netsdk.NET_OUT_LOGIN_WITH_HIGHLEVEL_SECURITY{}))
+// lhandle := netsdk.LoginWithHighLevelSecurity(&stLoginIn, &stLoginOut)
+// C.free(unsafe.Pointer(snCS))
+// if lhandle == 0 {
+// 	fmt.Printf("LoginWithHighLevelSecurity failed, 0x%x\n", netsdk.GetLastError())
+// 	return
+// }
+
+func LoginMode(mode EM_LOGIN_SPAC_CAP_TYPE) LogOptionFunc {
+	return func(inparam *NET_IN_LOGIN_WITH_HIGHLEVEL_SECURITY) {
+		inparam.ST_emSpecCap = mode
+	}
+}
+
+func LoginActive(sn string) LogOptionFunc {
+	return func(inparam *NET_IN_LOGIN_WITH_HIGHLEVEL_SECURITY) {
+		inparam.ST_pCapParam = uintptr(unsafe.Pointer(C.CString(sn)))
+	}
 }
 
 func (client *Client) Logout() bool {

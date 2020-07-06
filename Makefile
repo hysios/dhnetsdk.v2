@@ -5,10 +5,12 @@ dev:
 
 build:
 	@go build -o bin/traffic ./traffic
-	@go build -o bin/example ./example
+	@go build -o bin/server ./example/server
+	@go build -o bin/example ./example/alarm
 
 sync:
 	@scp bin/example devserver2:~/netsdk/bin
+	@scp bin/server  devserver2:~/netsdk/bin
 	@scp bin/traffic devserver2:~/netsdk/bin
 	
 dbuild:
