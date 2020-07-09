@@ -10,7 +10,6 @@ import (
 	"unsafe"
 
 	"github.com/hysios/dhnetsdk.v2/netsdk"
-	"github.com/kr/pretty"
 )
 
 // implement interface IF_fServiceCallBack
@@ -21,19 +20,18 @@ type ST_fServiceCallBack struct {
 func (p *ST_fServiceCallBack) Invoke(lHandle int, pIp string, wPort uint16, lCommand int, pParam uintptr, dwParamLen int) int {
 	if netsdk.NET_DVR_SERIAL_RETURN == lCommand {
 		sn := C.GoString((*C.char)(unsafe.Pointer(pParam)))
-		fmt.Println("Device register to server:", pIp, wPort, sn)
+		fmt.Println("Device register to server:", lHandle, pIp, wPort, sn)
 		// if deviceId == sn {
 		// 	go commonAlarm(pIp, int(wPort), username, passwd, sn)
 		// }
-
-		client, err := netsdk.Login(fmt.Sprintf("%s:%d", pIp, wPort), "admin", "admin123",
-			netsdk.LoginMode(netsdk.EM_LOGIN_SPEC_CAP_SERVER_CONN),
-			netsdk.LoginActive(sn))
-		if err != nil {
-			log.Printf("error %s\n", err)
-		}
-		log.Printf("client % #v\n", pretty.Formatter(client))
-		log.Printf("client serialNumber %s\n", string(client.DeviceInfo.ST_sSerialNumber[:]))
+		// client, err := netsdk.Login(fmt.Sprintf("%s:%d", pIp, wPort), "admin", "admin123",
+		// 	netsdk.LoginMode(netsdk.EM_LOGIN_SPEC_CAP_SERVER_CONN),
+		// 	netsdk.LoginActive(sn))
+		// if err != nil {
+		// 	log.Printf("error %s\n", err)
+		// }
+		// log.Printf("client % #v\n", pretty.Formatter(client))
+		// log.Printf("client serialNumber %s\n", string(client.DeviceInfo.ST_sSerialNumber[:]))
 	}
 
 	return 0

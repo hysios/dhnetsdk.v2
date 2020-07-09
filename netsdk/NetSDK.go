@@ -1,253 +1,96 @@
-// NetSDK project NetSDK.go
-
 package netsdk
 
-/*
-#cgo CFLAGS: -I .
-#cgo LDFLAGS: -L . -ldhnetsdk
-
-#include <stdio.h>
-#include <stdlib.h>
-#include "dhnetsdk.h"
-
-extern void export_fDisConnect(long lLoginID, char * pchDVRIP, int nDVRPort, long dwUser);
-extern int export_fServiceCallBack(long lHandle, char * pIp, unsigned short wPort, int lCommand, long pParam, int dwParamLen, long dwUserData);
-extern int export_fMessCallBack(int lCommand, long lLoginID, char * pBuf, int dwBufLen, char * pchDVRIP, int nDVRPort, long dwUser);
-extern int export_fSDKLogCallBack(char * szLogBuffer, uint nLogSize, long dwUser);
-extern int export_fAnalyzerDataCallBack(long lAnalyzerHandle, unsigned int dwAlarmType, long pAlarmInfo, long pBuffer,unsigned int dwBufSize, long dwUser, int nSequence,long reserved);
-extern int export_fAnalyzerDataCallBack2(long lAnalyzerHandle, unsigned int dwAlarmType, long pAlarmInfo, long pBuffer,unsigned int dwBufSize, long dwUser, int nSequence,long reserved);
-extern void export_fSearchDevicesCBEx(long lSearchHandle, DEVICE_NET_INFO_EX2 *pDevNetInfo, long pUserData);
-extern void export_fSnapRev(long lLoginID, unsigned char *pBuf, unsigned int RevLen, unsigned int EncodeType, unsigned int CmdSerial, long dwUser);
-extern void export_fSearchDevicesCB(DEVICE_NET_INFO_EX *pDevNetInfo, long pUserData);
-extern void export_fTimeDownLoadPosCallBack(long lPlayHandle, unsigned int dwTotalSize, int dwDownLoadSize, int index, NET_RECORDFILE_INFO recordfileinfo, long dwUser);
-extern int export_fDataCallBack(long lRealHandle, unsigned int dwDataType, unsigned char * pBuffer, unsigned int dwBufSize, long dwUser);
-*/
+// #cgo CFLAGS: -I .
+// #cgo LDFLAGS: -L . -ldhnetsdk
+// #include <stdio.h>
+// #include <stdlib.h>
+// #include "dhnetsdk.h"
+//
+// extern void export_fDisConnect(long lLoginID, char * pchDVRIP, int nDVRPort, long dwUser);
+// extern int export_fServiceCallBack(long lHandle, char * pIp, unsigned short wPort, int lCommand, long pParam, int dwParamLen, long dwUserData);
+// extern int export_fMessCallBack(int lCommand, long lLoginID, char * pBuf, int dwBufLen, char * pchDVRIP, int nDVRPort, long dwUser);
+// extern int export_fSDKLogCallBack(char * szLogBuffer, uint nLogSize, long dwUser);
+// extern int export_fAnalyzerDataCallBack(long lAnalyzerHandle, unsigned int dwAlarmType, long pAlarmInfo, long pBuffer,unsigned int dwBufSize, long dwUser, int nSequence,long reserved);
+// extern int export_fAnalyzerDataCallBack2(long lAnalyzerHandle, unsigned int dwAlarmType, long pAlarmInfo, long pBuffer,unsigned int dwBufSize, long dwUser, int nSequence,long reserved);
+// extern void export_fSearchDevicesCBEx(long lSearchHandle, DEVICE_NET_INFO_EX2 *pDevNetInfo, long pUserData);
+// extern void export_fSnapRev(long lLoginID, unsigned char *pBuf, unsigned int RevLen, unsigned int EncodeType, unsigned int CmdSerial, long dwUser);
+// extern void export_fSearchDevicesCB(DEVICE_NET_INFO_EX *pDevNetInfo, long pUserData);
+// extern void export_fTimeDownLoadPosCallBack(long lPlayHandle, unsigned int dwTotalSize, int dwDownLoadSize, int index, NET_RECORDFILE_INFO recordfileinfo, long dwUser);
+// extern int export_fDataCallBack(long lRealHandle, unsigned int dwDataType, unsigned char * pBuffer, unsigned int dwBufSize, long dwUser);
+// extern void export_fDisconnect2(long dwUser, char *pchDVRIP, LONG nDVRPort);
+//
+//
+// void CALLBACK cDisConnectFunc(LLONG lLoginID, char *pchDVRIP, LONG nDVRPort, LDWORD dwUser) {
+//     if (0 != dwUser)
+//     {
+//         export_fDisconnect2(dwUser, pchDVRIP, nDVRPort);
+//     }
+// }
+//
+//// void CALLBACK cReConnectFunc(LLONG lLoginID, char *pchDVRIP, LONG nDVRPort, LDWORD dwUser)
+//// {
+////     if (0 != dwUser)
+////     {
+////         goReConnect(dwUser, pchDVRIP, nDVRPort);
+////     }
+//// }
+////
+//// BOOL CALLBACK cMessCallBack(LONG lCommand, LLONG lLoginID, char *pBuf, DWORD dwBufLen, char *pchDVRIP, LONG nDVRPort, LDWORD dwUser)
+//// {
+////     if(0 == dwUser)
+////     {
+////         return FALSE;
+////     }
+//// 	   return goDvrMessage(dwUser, lCommand, pBuf, dwBufLen, pchDVRIP, nDVRPort);
+//// }
+////
 import "C"
 
 import (
 	"log"
-	"reflect"
 	"unsafe"
 
 	"github.com/mattn/go-pointer"
 )
 
-// 声明一个函数类型
-type CallBack_fDisConnect func(lLoginID LLONG, pchDVRIP string, nDVRPort int, dwUser LLONG)
-type CallBack_fAnalyzerDataCallBack func(lAnalyzerHandle LLONG, dwAlarmType DWORD, pAlarmInfo LLONG,
-	pBuffer LLONG, dwBufSize DWORD, dwUser LLONG, nSequence int32, reserved LLONG)
+type DhAlarmType int
 
-//export export_fDisConnect
-func export_fDisConnect(lLoginID C.long, pchDVRIP *C.char, nDVRPort C.int, dwUser C.long) {
-	log.Println(pchDVRIP, " disconnect...")
-	log.Println(" ------------------------------------------------------------------")
-	log.Println(pchDVRIP, " disconnect...")
-	var InnerUser LLONG = LLONG(dwUser)
-	var rrr *CallBack_fDisConnect = (*CallBack_fDisConnect)((unsafe.Pointer(&InnerUser)))
+const (
+	// 报警类型,对应CLIENT_StartListen接口
+	DhCommAlarm         DhAlarmType = C.DH_COMM_ALARM          // 常规报警(包括外部报警,视频丢失,动态检测)
+	DhShelterAlarm      DhAlarmType = C.DH_SHELTER_ALARM       // 视频遮挡报警
+	DhDiskFullAlarm     DhAlarmType = C.DH_DISK_FULL_ALARM     // 硬盘满报警
+	DhDiskErrorAlarm    DhAlarmType = C.DH_DISK_ERROR_ALARM    // 硬盘故障报警
+	DhSoundDetectAlarm  DhAlarmType = C.DH_SOUND_DETECT_ALARM  // 音频检测报警
+	DhAlarmDecoderAlarm DhAlarmType = C.DH_ALARM_DECODER_ALARM // 报警解码器报警
+)
 
-	(*rrr)(LLONG(lLoginID), C.GoString(pchDVRIP), int(nDVRPort), LLONG(dwUser))
-}
+type (
+	ReconnectFunc  func(ip string, port int)
+	DisconnectFunc func(ip string, port int)
+	DVRMessageFunc func(cmd DhAlarmType, buf []byte, ip string, port int) bool
+	PictureExFunc  func(client *Client, AlarmType EventIvs, alarmInfo interface{}, frame []byte, seq int) int
+)
 
-type IF_fServiceCallBack interface {
-	Invoke(lHandle int, pIp string, wPort uint16, lCommand int, pParam uintptr, dwParamLen int) int
-}
-
-//export export_fServiceCallBack
-func export_fServiceCallBack(lHandle C.long, pIp *C.char, wPort C.ushort, lCommand C.int, pParam C.long, dwParamLen C.int, dwUserData C.long) C.int {
-	// log.Println(int(lHandle), C.GoString(pIp), uint16(wPort), int(lCommand), uintptr(pParam), int(dwParamLen), int(dwUserData))
-
-	id := ObjectId(dwUserData)
-	interf := id.Get()
-	obj, ok := interf.(IF_fServiceCallBack)
-
-	var ret int
-	if ok {
-		ret = obj.Invoke(int(lHandle), C.GoString(pIp), uint16(wPort), int(lCommand), uintptr(pParam), int(dwParamLen))
-	} else {
-		log.Panicf("%T is not IF_fServiceCallBack", interf)
+type (
+	DisconnectVisitor struct {
+		Callback DisconnectFunc
 	}
-	return C.int(ret)
-}
 
-type IF_fMessCallBack interface {
-	Invoke(lCommand int, lLoginID int, pBuf unsafe.Pointer, dwBufLen int, pchDVRIP string, nDVRPort int) bool
-}
-
-//export export_fMessCallBack
-func export_fMessCallBack(lCommand C.int, lLoginID C.long, pBuf *C.char, dwBufLen C.int, pchDVRIP *C.char, nDVRPort C.int, dwUser C.long) C.int {
-	//log.Println(int(lCommand), int(lLoginID), int(dwBufLen), C.GoString(pchDVRIP), int(nDVRPort), int(dwUser))
-	id := ObjectId(dwUser)
-	interf := id.Get()
-	obj, ok := interf.(IF_fMessCallBack)
-	if ok {
-		ret := obj.Invoke(int(lCommand), int(lLoginID), unsafe.Pointer(pBuf), int(dwBufLen), C.GoString(pchDVRIP), int(nDVRPort))
-		if ret {
-			return 1
-		}
-	} else {
-		log.Panicf("%T is not IF_fMessCallBack", interf)
+	ReconnectVisitor struct {
+		// Client   *Client
+		Callback ReconnectFunc
 	}
-	return 0
-}
 
-// declare fun log
-type CallBack_fSDKLogCallBack func(szLogBuffer string, nLogSize uint32)
-
-//export export_fSDKLogCallBack
-func export_fSDKLogCallBack(szLogBuffer *C.char, nLogSize C.uint, dwUser C.long) int32 {
-	log.Println("Enter fSDKLogCallBack...")
-	var cb *CallBack_fSDKLogCallBack = (*CallBack_fSDKLogCallBack)(unsafe.Pointer(&dwUser))
-	log.Println("*cb is ", *cb)
-	if nil != *cb {
-		(*cb)(C.GoString(szLogBuffer), uint32(nLogSize))
+	DrvMessageVisitor struct {
+		Client   *Client
+		Callback DVRMessageFunc
 	}
-	return 0
-
-}
-
-//export export_fAnalyzerDataCallBack
-func export_fAnalyzerDataCallBack(lAnalyzerHandle C.long, dwAlarmType C.uint, pAlarmInfo C.long, pBuffer C.long, dwBufSize C.uint, dwUser C.long, nSequence C.int, reserved C.long) int32 {
-	log.Println("Enter fAnalyzerDataCallBack...")
-	var InnerUser LLONG = LLONG(dwUser)
-	var cb *CallBack_fAnalyzerDataCallBack = (*CallBack_fAnalyzerDataCallBack)((unsafe.Pointer(&InnerUser)))
-
-	log.Printf("cb %v", cb)
-	(*cb)(LLONG(lAnalyzerHandle), DWORD(dwAlarmType), LLONG(pAlarmInfo), LLONG(pBuffer),
-		DWORD(dwBufSize), LLONG(dwUser), int32(nSequence), LLONG(reserved))
-
-	return 1
-}
+)
 
 type PictureVisitor struct {
 	Client   *Client
 	Callback PictureExFunc
-}
-
-//export export_fAnalyzerDataCallBack2
-func export_fAnalyzerDataCallBack2(lAnalyzerHandle C.long, dwAlarmType C.uint, pAlarmInfo C.long, pBuffer C.long, dwBufSize C.DWORD, dwUser C.long, nSequence C.int, reserved C.long) int32 {
-	log.Println("Enter fAnalyzerDataCallBack...")
-
-	p := pointer.Restore(unsafe.Pointer(uintptr(dwUser)))
-
-	visitor, ok := p.(*PictureVisitor)
-	if !ok {
-		log.Printf("visitor nil")
-		return 0
-
-	}
-
-	switch EVENT_IVS(dwAlarmType) {
-	case EVENT_IVS_TRAFFIC_PARKING:
-		alarmType := (*DEV_EVENT_TRAFFIC_PARKING_INFO)(unsafe.Pointer(uintptr(pAlarmInfo)))
-		var buf []byte
-		data := (*reflect.SliceHeader)(unsafe.Pointer(&buf))
-		data.Data = uintptr(unsafe.Pointer(uintptr(pBuffer)))
-		data.Len = int(dwBufSize)
-		data.Cap = int(dwBufSize)
-
-		visitor.Callback(visitor.Client, EventIvs(dwAlarmType), alarmType, buf, int(nSequence))
-	}
-
-	return 1
-}
-
-type IF_fSearchDevicesCBEx interface {
-	Invoke(lSearchHandle LLONG, pDevNetInfo *DEVICE_NET_INFO_EX2)
-}
-
-//export export_fSearchDevicesCBEx
-func export_fSearchDevicesCBEx(lSearchHandle C.long, pDevNetInfo *C.struct_tagDEVICE_NET_INFO_EX2, pUserData C.long) {
-	//	log.Println("Enter export_fSearchDevicesCBEx...")
-	var cb *IF_fSearchDevicesCBEx = (*IF_fSearchDevicesCBEx)(unsafe.Pointer(&pUserData))
-	(*cb).Invoke(LLONG(lSearchHandle), (*DEVICE_NET_INFO_EX2)(unsafe.Pointer(pDevNetInfo)))
-}
-
-// //export export_fSearchDevicesCBEx2
-// func export_fSearchDevicesCBEx2(lSearchHandle C.long, pDevNetInfo *C.struct_tagDEVICE_NET_INFO_EX2, pUserData C.long) {
-// 	var user_data = unsafe.Pointer(uintptr(pUserData))
-// 	if v, ok := pointer.Restore(user_data).(SearchVisitor); ok {
-// 		if v.Callback != nil {
-// 			devinfo := (*DEVICE_NET_INFO_EX2)(unsafe.Pointer(pDevNetInfo))
-// 			v.Callback(v.Search, &devinfo.ST_stuDevInfo)
-// 		}
-// 	}
-// }
-
-type IF_fSnapRev interface {
-	Invoke(lLoginID int, pBuf []byte, EncodeType uint, CmdSerial uint)
-}
-
-//export export_fSnapRev
-func export_fSnapRev(lLoginID C.long, pBuf *C.uchar, RevLen C.uint, EncodeType C.uint, CmdSerial C.uint, dwUser C.long) {
-	id := ObjectId(dwUser)
-	interf := id.Get()
-	obj, ok := interf.(IF_fSnapRev)
-	if ok {
-		var buf []byte
-		data := (*reflect.SliceHeader)(unsafe.Pointer(&buf))
-		data.Data = uintptr(unsafe.Pointer(pBuf))
-		data.Len = int(RevLen)
-		data.Cap = int(RevLen)
-		obj.Invoke(int(lLoginID), buf, uint(EncodeType), uint(CmdSerial))
-	} else {
-		log.Panicf("%T is not IF_fSnapRev", interf)
-	}
-}
-
-// Corresponding to SearchDevicesByIPs API
-type IF_fSearchDevicesCB interface {
-	Invoke(pDevNetInfo *DEVICE_NET_INFO_EX)
-}
-
-//export export_fSearchDevicesCB
-func export_fSearchDevicesCB(pDevNetInfo *C.struct_tagDEVICE_NET_INFO_EX, pUserData C.long) {
-	//	log.Println("Enter export_fSearchDevicesCB...")
-	var cb *IF_fSearchDevicesCB = (*IF_fSearchDevicesCB)(unsafe.Pointer(&pUserData))
-	(*cb).Invoke((*DEVICE_NET_INFO_EX)(unsafe.Pointer(pDevNetInfo)))
-
-}
-
-type IF_fTimeDownLoadPosCallBack interface {
-	Invoke(lPlayHandle int, dwTotalSize uint, dwDownLoadSize int, index int, recordfileinfo NET_RECORDFILE_INFO)
-}
-
-//export export_fTimeDownLoadPosCallBack
-func export_fTimeDownLoadPosCallBack(lPlayHandle C.long, dwTotalSize C.uint, dwDownLoadSize C.int, index C.int, recordfileinfo C.NET_RECORDFILE_INFO, dwUser C.long) {
-	id := ObjectId(dwUser)
-	interf := id.Get()
-	obj, ok := interf.(IF_fTimeDownLoadPosCallBack)
-	if ok {
-		obj.Invoke(int(lPlayHandle), uint(dwTotalSize), int(dwDownLoadSize), int(index), *(*NET_RECORDFILE_INFO)(unsafe.Pointer(&recordfileinfo)))
-	} else {
-		log.Panicf("%T is not IF_fTimeDownLoadPosCallBack", interf)
-	}
-}
-
-type IF_fDataCallBack interface {
-	Invoke(lRealHandle int, dwDataType uint, pBuffer []byte) int
-}
-
-//export export_fDataCallBack
-func export_fDataCallBack(lRealHandle C.long, dwDataType C.uint, pBuffer *C.uchar, dwBufSize C.uint, dwUser C.long) C.int {
-	id := ObjectId(dwUser)
-	interf := id.Get()
-
-	/*switch t := obj.(type) {
-	case IF_fDataCallBack:
-		return C.int(t.Invoke(int(lRealHandle), uint(dwDataType), buf))
-	}*/
-	obj, ok := interf.(IF_fDataCallBack)
-	if ok {
-		var buf []byte
-		data := (*reflect.SliceHeader)(unsafe.Pointer(&buf))
-		data.Data = uintptr(unsafe.Pointer(pBuffer))
-		data.Len = int(dwBufSize)
-		data.Cap = int(dwBufSize)
-		return C.int(obj.Invoke(int(lRealHandle), uint(dwDataType), buf))
-	} else {
-		log.Panicf("%T is not IF_fDataCallBack", interf)
-	}
-	return C.int(dwBufSize)
 }
 
 func InitEx(cb CallBack_fDisConnect, stuInfo *NETSDK_INIT_PARAM) bool {
@@ -268,6 +111,21 @@ func InitEx(cb CallBack_fDisConnect, stuInfo *NETSDK_INIT_PARAM) bool {
 		return true
 	}
 	return false
+}
+
+func InitEx2(callback DisconnectFunc) bool {
+	var (
+		v = DisconnectVisitor{
+			Callback: callback,
+		}
+	)
+
+	p := pointer.Save(v)
+	ret := C.CLIENT_Init(C.fDisConnect(C.cDisConnectFunc), (C.long)(uintptr(p)))
+	if ret > 0 {
+		return false
+	}
+	return true
 }
 
 // SDK clean up

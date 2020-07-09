@@ -20,13 +20,6 @@ import (
 	"github.com/mattn/go-pointer"
 )
 
-type (
-	ReconnectFunc  func(ip string, port int)
-	DisconnectFunc func(ip string, port int)
-	// DVRMessageFunc func(cmd DhAlarmType, buf []byte, ip string, port int) bool
-	PictureExFunc func(client *Client, AlarmType EventIvs, alarmInfo interface{}, frame []byte, seq int) int
-)
-
 type Client struct {
 	LoginID int
 
