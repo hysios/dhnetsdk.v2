@@ -11,7 +11,6 @@ import "C"
 
 import (
 	"errors"
-	"fmt"
 	"log"
 	"strconv"
 	"strings"
@@ -28,19 +27,6 @@ type Client struct {
 	reconnectVisitorp unsafe.Pointer
 	messageVisitorp   unsafe.Pointer
 	DeviceInfo        NET_DEVICEINFO_Ex
-}
-
-func Init(cb DisconnectFunc) error {
-	initParam := NETSDK_INIT_PARAM{}
-	bRet := InitEx(func(lLoginID LLONG, pchDVRIP string, nDVRPort int, dwUser LLONG) {
-		if cb != nil {
-			cb(pchDVRIP, nDVRPort)
-		}
-	}, &initParam)
-	if false == bRet {
-		return fmt.Errorf("Init NetSDK failed")
-	}
-	return nil
 }
 
 func NewClient() *Client {

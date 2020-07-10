@@ -16,7 +16,7 @@ import (
 // func AnalyzerDataCallBack()
 
 func main() {
-	err := netsdk.Init(nil)
+	err := netsdk.InitEx(nil)
 	if err != nil {
 		log.Fatalf("init netsdk error %s\n", err)
 	}

@@ -151,10 +151,8 @@ func TestfAnalyzerDataCallBack(lAnalyzerHandle netsdk.LLONG, dwAlarmType netsdk.
 }
 
 func main() {
-	initParam := netsdk.NETSDK_INIT_PARAM{}
-	bRet := netsdk.InitEx(Test_fDisConnect, &initParam)
-	if false == bRet {
-		fmt.Println("Init NetSDK failed")
+	if err := netsdk.InitEx(nil); err != nil {
+		fmt.Printf("Init NetSDK failed %s\n", err)
 		return
 	}
 	fmt.Println("Init NetSDK success")
