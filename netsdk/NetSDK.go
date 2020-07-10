@@ -19,7 +19,6 @@ package netsdk
 // extern int export_fDataCallBack(long lRealHandle, unsigned int dwDataType, unsigned char * pBuffer, unsigned int dwBufSize, long dwUser);
 // extern void export_fDisconnect2(long dwUser, char *pchDVRIP, LONG nDVRPort);
 //
-//
 // void CALLBACK cDisConnectFunc(LLONG lLoginID, char *pchDVRIP, LONG nDVRPort, LDWORD dwUser) {
 //     if (0 != dwUser)
 //     {
@@ -27,23 +26,23 @@ package netsdk
 //     }
 // }
 //
-//// void CALLBACK cReConnectFunc(LLONG lLoginID, char *pchDVRIP, LONG nDVRPort, LDWORD dwUser)
-//// {
-////     if (0 != dwUser)
-////     {
-////         goReConnect(dwUser, pchDVRIP, nDVRPort);
-////     }
-//// }
-////
-//// BOOL CALLBACK cMessCallBack(LONG lCommand, LLONG lLoginID, char *pBuf, DWORD dwBufLen, char *pchDVRIP, LONG nDVRPort, LDWORD dwUser)
-//// {
-////     if(0 == dwUser)
-////     {
-////         return FALSE;
-////     }
-//// 	   return goDvrMessage(dwUser, lCommand, pBuf, dwBufLen, pchDVRIP, nDVRPort);
-//// }
-////
+// void CALLBACK cReConnectFunc(LLONG lLoginID, char *pchDVRIP, LONG nDVRPort, LDWORD dwUser)
+// {
+//     if (0 != dwUser)
+//     {
+//         goReConnect(dwUser, pchDVRIP, nDVRPort);
+//     }
+// }
+//
+// BOOL CALLBACK cMessCallBack(LONG lCommand, LLONG lLoginID, char *pBuf, DWORD dwBufLen, char *pchDVRIP, LONG nDVRPort, LDWORD dwUser)
+// {
+//     if(0 == dwUser)
+//     {
+//         return FALSE;
+//     }
+// 	   return goDvrMessage(dwUser, lCommand, pBuf, dwBufLen, pchDVRIP, nDVRPort);
+// }
+//
 import "C"
 
 import (
@@ -66,9 +65,9 @@ const (
 )
 
 type (
-	ReconnectFunc  func(ip string, port int)
+	ReconnectFunc  func(client *Client, ip string, port int)
 	DisconnectFunc func(ip string, port int)
-	DVRMessageFunc func(cmd DhAlarmType, buf []byte, ip string, port int) bool
+	DVRMessageFunc func(client *Client, cmd DhAlarmType, buf []byte, ip string, port int) bool
 	PictureExFunc  func(client *Client, AlarmType EventIvs, alarmInfo interface{}, frame []byte, seq int) int
 )
 
@@ -78,7 +77,7 @@ type (
 	}
 
 	ReconnectVisitor struct {
-		// Client   *Client
+		Client   *Client
 		Callback ReconnectFunc
 	}
 
@@ -113,7 +112,7 @@ func InitEx(cb CallBack_fDisConnect, stuInfo *NETSDK_INIT_PARAM) bool {
 	return false
 }
 
-func InitEx2(callback DisconnectFunc) bool {
+func InitEx2(callback DisconnectFunc) error {
 	var (
 		v = DisconnectVisitor{
 			Callback: callback,
@@ -123,9 +122,9 @@ func InitEx2(callback DisconnectFunc) bool {
 	p := pointer.Save(v)
 	ret := C.CLIENT_Init(C.fDisConnect(C.cDisConnectFunc), (C.long)(uintptr(p)))
 	if ret > 0 {
-		return false
+		return Err(GetLastError())
 	}
-	return true
+	return nil
 }
 
 // SDK clean up
@@ -503,4 +502,35 @@ func SetOptimizeMode(emType EM_OPTIMIZE_TYPE, pParam unsafe.Pointer) bool {
 
 func StrZ(addr uintptr) string {
 	return C.GoString((*C.char)(unsafe.Pointer(addr)))
+}
+
+func (client *Client) SetAutoReconnect(callback ReconnectFunc) error {
+	var v = ReconnectVisitor{
+		Client:   client,
+		Callback: callback,
+	}
+	if client.reconnectVisitorp != nil {
+		pointer.Unref(client.reconnectVisitorp)
+	}
+	p := pointer.Save(v)
+	client.reconnectVisitorp = p
+	// defer pointer.Unref(p)
+	C.CLIENT_SetAutoReconnect(C.fHaveReConnect(C.cReConnectFunc), (C.long)(uintptr(p)))
+	return nil
+}
+
+func (client *Client) SetDVRMessCallBack(callback DVRMessageFunc) error {
+	var v = DrvMessageVisitor{
+		Client:   client,
+		Callback: callback,
+	}
+
+	if client.messageVisitorp != nil {
+		pointer.Unref(client.messageVisitorp)
+	}
+	p := pointer.Save(&v)
+	client.messageVisitorp = p
+
+	C.CLIENT_SetDVRMessCallBack(C.fMessCallBack(C.cMessCallBack), (C.long)(uintptr(p)))
+	return nil
 }

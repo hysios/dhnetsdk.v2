@@ -23,9 +23,11 @@ import (
 type Client struct {
 	LoginID int
 
-	realloadHandle int64
-	subscribP      unsafe.Pointer
-	DeviceInfo     NET_DEVICEINFO_Ex
+	realloadHandle    int64
+	subscribP         unsafe.Pointer
+	reconnectVisitorp unsafe.Pointer
+	messageVisitorp   unsafe.Pointer
+	DeviceInfo        NET_DEVICEINFO_Ex
 }
 
 func Init(cb DisconnectFunc) error {

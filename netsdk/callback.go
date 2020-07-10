@@ -34,7 +34,7 @@ func goReConnect(user_data unsafe.Pointer, ip *C.char, port C.int) {
 	if v, ok := pointer.Restore(user_data).(ReconnectVisitor); ok {
 		// defer pointer.Unref(user_data)
 		if v.Callback != nil {
-			v.Callback(C.GoString(ip), int(port))
+			v.Callback(v.Client, C.GoString(ip), int(port))
 		}
 	}
 
@@ -45,7 +45,7 @@ func goDvrMessage(user_data unsafe.Pointer, cmd C.int, buf *C.char, l C.int, ip 
 	if v, ok := pointer.Restore(user_data).(DrvMessageVisitor); ok {
 		// defer pointer.Unref(user_data)
 		if v.Callback != nil {
-			v.Callback(DhAlarmType(cmd), C.GoBytes(unsafe.Pointer(buf), l), C.GoString(ip), int(port))
+			v.Callback(v.Client, DhAlarmType(cmd), C.GoBytes(unsafe.Pointer(buf), l), C.GoString(ip), int(port))
 		}
 	}
 }
