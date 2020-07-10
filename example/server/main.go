@@ -45,7 +45,6 @@ var (
 func main() {
 	flag.Parse()
 	if err := netsdk.InitEx2(func(ip string, port int) {
-
 		log.Printf("disconnect ip %s:%d\n", ip, port)
 	}); err != nil {
 		log.Fatalf("init netsdk error %s", err)

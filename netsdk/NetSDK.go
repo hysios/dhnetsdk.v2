@@ -92,27 +92,27 @@ type PictureVisitor struct {
 	Callback PictureExFunc
 }
 
-func InitEx(cb CallBack_fDisConnect, stuInfo *NETSDK_INIT_PARAM) bool {
-	if nil == stuInfo {
-		log.Println("stuInfo is nil")
-		return false
-	}
+// func InitEx(cb CallBack_fDisConnect, stuInfo *NETSDK_INIT_PARAM) bool {
+// 	if nil == stuInfo {
+// 		log.Println("stuInfo is nil")
+// 		return false
+// 	}
 
-	var lpInitParam = C.struct_tagNETSDK_INIT_PARAM{}
-	lpInitParam.nThreadNum = C.int(stuInfo.ST_nThreadNum)
+// 	var lpInitParam = C.struct_tagNETSDK_INIT_PARAM{}
+// 	lpInitParam.nThreadNum = C.int(stuInfo.ST_nThreadNum)
 
-	var userdata *LLONG = (*LLONG)(unsafe.Pointer(&cb))
-	log.Println("userData=", *userdata)
+// 	var userdata *LLONG = (*LLONG)(unsafe.Pointer(&cb))
+// 	log.Println("userData=", *userdata)
 
-	ret := C.CLIENT_InitEx(C.fDisConnect(C.export_fDisConnect), C.long(*userdata), (*C.struct_tagNETSDK_INIT_PARAM)(unsafe.Pointer(&lpInitParam)))
-	if ret != 0 {
-		log.Println(" call CLIENT_InitEx success")
-		return true
-	}
-	return false
-}
+// 	ret := C.CLIENT_InitEx(C.fDisConnect(C.export_fDisConnect), C.long(*userdata), (*C.struct_tagNETSDK_INIT_PARAM)(unsafe.Pointer(&lpInitParam)))
+// 	if ret != 0 {
+// 		log.Println(" call CLIENT_InitEx success")
+// 		return true
+// 	}
+// 	return false
+// }
 
-func InitEx2(callback DisconnectFunc) error {
+func InitEx(callback DisconnectFunc) error {
 	var (
 		v = DisconnectVisitor{
 			Callback: callback,
