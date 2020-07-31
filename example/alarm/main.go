@@ -32,7 +32,7 @@ func main() {
 
 	pp.Printf("client %s", client.DeviceInfo)
 
-	client.RealLoadPictureEx(0, netsdk.EVENT_IVS_ALL,
+	err = client.RealLoadPictureEx(0, netsdk.EVENT_IVS_ALL,
 		func(client *netsdk.Client, alarmType netsdk.EventIvs, alarmInfo interface{}, frame []byte, seq int) int {
 			switch alarmType {
 			case netsdk.EVENT_IVS_TRAFFIC_PARKING:
@@ -67,6 +67,7 @@ func main() {
 			return 0
 		},
 	)
+	log.Printf("error %s", err)
 
 	for {
 		time.Sleep(1 * time.Second)
