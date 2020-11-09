@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"log"
 	"net"
@@ -15,7 +16,24 @@ import (
 
 // func AnalyzerDataCallBack()
 
+var (
+	addr string
+	user string
+	pass string
+)
+
+func init() {
+	flag.StringVar(&addr, "addr", "", "大华设备地址")
+	flag.StringVar(&user, "user", "", "大华设备登陆帐号")
+	flag.StringVar(&pass, "pass", "", "大华设备登陆密码")
+	flag.Set("addr", "192.168.1.190:37777")
+	flag.Set("user", "admin")
+	flag.Set("pass", "admin123")
+}
+
 func main() {
+	flag.Parse()
+
 	err := netsdk.InitEx(nil)
 	if err != nil {
 		log.Fatalf("init netsdk error %s\n", err)
@@ -25,7 +43,7 @@ func main() {
 	var search netsdk.Search
 	searchAllClients(&search)
 
-	client, err := netsdk.Login("192.168.1.190:37777", "admin", "admin123")
+	client, err := netsdk.Login(addr, user, pass)
 	if err != nil {
 		log.Fatalf("login failed %s", err)
 	}
@@ -40,6 +58,7 @@ func main() {
 
 					fmt.Printf("%s, %d\n", netsdk.Str(info.ST_stuObject.ST_szObjectType[:]), info.ST_stuObject.ST_nObjectID)
 					fmt.Printf("%s, %s\n", netsdk.Str(info.ST_stuVehicle.ST_szObjectType[:]), netsdk.Str(info.ST_stuVehicle.ST_szObjectSubType[:]))
+					fmt.Printf("PlateNumber %s\n", netsdk.Str(info.ST_stTrafficCar.ST_szPlateNumber[:]))
 					fmt.Printf("frame size %d\n", len(frame))
 					// fmt.Printf("info %#v\n", info)
 					globalfilename := fmt.Sprintf("images/%04d%02d%02d-%02d%02d%02d%04d-%d_%s",
