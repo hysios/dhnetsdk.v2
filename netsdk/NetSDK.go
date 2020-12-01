@@ -16,7 +16,9 @@ package netsdk
 // extern void export_fSnapRev(long lLoginID, unsigned char *pBuf, unsigned int RevLen, unsigned int EncodeType, unsigned int CmdSerial, long dwUser);
 // extern void export_fSearchDevicesCB(DEVICE_NET_INFO_EX *pDevNetInfo, long pUserData);
 // extern void export_fTimeDownLoadPosCallBack(long lPlayHandle, unsigned int dwTotalSize, int dwDownLoadSize, int index, NET_RECORDFILE_INFO recordfileinfo, long dwUser);
+// extern void export_fTimeDownLoadPosCallBack2(long lPlayHandle, unsigned int dwTotalSize, int dwDownLoadSize, int index, NET_RECORDFILE_INFO recordfileinfo, long dwUser);
 // extern int export_fDataCallBack(long lRealHandle, unsigned int dwDataType, unsigned char * pBuffer, unsigned int dwBufSize, long dwUser);
+// extern int export_fDataCallBack2(long lRealHandle, unsigned int dwDataType, unsigned char * pBuffer, unsigned int dwBufSize, long dwUser);
 // extern void export_fDisconnect2(long dwUser, char *pchDVRIP, LONG nDVRPort);
 //
 // void CALLBACK cDisConnectFunc(LLONG lLoginID, char *pchDVRIP, LONG nDVRPort, LDWORD dwUser) {
@@ -47,6 +49,7 @@ import "C"
 
 import (
 	"log"
+	"time"
 	"unsafe"
 
 	"github.com/mattn/go-pointer"
@@ -65,10 +68,12 @@ const (
 )
 
 type (
-	ReconnectFunc  func(client *Client, ip string, port int)
-	DisconnectFunc func(ip string, port int)
-	DVRMessageFunc func(client *Client, cmd DhAlarmType, buf []byte, ip string, port int) bool
-	PictureExFunc  func(client *Client, AlarmType EventIvs, alarmInfo interface{}, frame []byte, seq int) int
+	ReconnectFunc    func(client *Client, ip string, port int)
+	DisconnectFunc   func(ip string, port int)
+	DVRMessageFunc   func(client *Client, cmd DhAlarmType, buf []byte, ip string, port int) bool
+	PictureExFunc    func(client *Client, AlarmType EventIvs, alarmInfo interface{}, frame []byte, seq int) int
+	DownloadPosFunc  func(userdata interface{}, total int, download int, index int, info NET_RECORDFILE_INFO)
+	DataCallbackFunc func(userdata interface{}, typ int, buf []byte)
 )
 
 type (
@@ -84,6 +89,17 @@ type (
 	DrvMessageVisitor struct {
 		Client   *Client
 		Callback DVRMessageFunc
+	}
+
+	TimeDownloadPosVisitor struct {
+		UserData interface{}
+		Step     int
+		Callback DownloadPosFunc
+	}
+
+	DataCallbackVisitor struct {
+		UserData interface{}
+		Callback DataCallbackFunc
 	}
 )
 
@@ -380,7 +396,7 @@ func SetSnapRevCallBack(dwUser ObjectId /*IF_fSnapRev*/) {
 	C.CLIENT_SetSnapRevCallBack(C.fSnapRev(C.export_fSnapRev), C.long(dwUser))
 }
 
-func DownloadByTimeEx(lLoginID int, nChannelId int, nRecordFileType EM_QUERY_RECORD_TYPE, tmStart *NET_TIME, tmEnd *NET_TIME, sSavedFileName string, dwUserData ObjectId /*IF_fTimeDownLoadPosCallBack*/, dwDataUser ObjectId /*IF_fDataCallBack*/, pReserved unsafe.Pointer) int {
+func DownloadByTimeEx2(lLoginID int, nChannelId int, nRecordFileType EM_QUERY_RECORD_TYPE, tmStart *NET_TIME, tmEnd *NET_TIME, sSavedFileName string, dwUserData ObjectId /*IF_fTimeDownLoadPosCallBack*/, dwDataUser ObjectId /*IF_fDataCallBack*/, pReserved unsafe.Pointer) int {
 	if dwUserData.IsNil() || dwDataUser.IsNil() {
 		log.Println("dwUserData or dwDataUser is nil")
 		return 0
@@ -390,9 +406,55 @@ func DownloadByTimeEx(lLoginID int, nChannelId int, nRecordFileType EM_QUERY_REC
 	tmEndTmp := (*C.struct_tagNET_TIME)(unsafe.Pointer(tmEnd))
 	fileNameTmp := C.CString(sSavedFileName)
 	ret := C.CLIENT_DownloadByTimeEx(C.long(lLoginID), C.int(nChannelId), C.int(nRecordFileType), tmStartTmp, tmEndTmp, fileNameTmp,
-		C.fTimeDownLoadPosCallBack(C.export_fTimeDownLoadPosCallBack), C.long(dwUserData), C.fDataCallBack(C.export_fDataCallBack), C.long(dwDataUser), pReserved)
+		C.fTimeDownLoadPosCallBack(C.export_fTimeDownLoadPosCallBack2), C.long(dwUserData), C.fDataCallBack(C.export_fDataCallBack), C.long(dwDataUser), pReserved)
 	C.free(unsafe.Pointer(fileNameTmp))
 	return int(ret)
+}
+
+type download struct {
+}
+
+type userdata struct {
+}
+
+func DownloadByTimeEx(lLoginID int, nChannelId int, nRecordFileType EM_QUERY_RECORD_TYPE, startTime time.Time, duration time.Duration, sSavedFileName string, userdata interface{}, callback DownloadPosFunc) (uint64, error) {
+	var (
+		downloadVisitor = &TimeDownloadPosVisitor{
+			UserData: userdata,
+			Callback: callback,
+		}
+		callbackVisitor = &DataCallbackVisitor{
+			UserData: userdata,
+			Callback: func(suerdata interface{}, typ int, buf []byte) {},
+		}
+	)
+
+	downinfo := pointer.Save(downloadVisitor)
+	datacb := pointer.Save(callbackVisitor)
+
+	tmStart := Time2nt(startTime)
+	tmEnd := Time2nt(startTime.Add(duration))
+	tmStartTmp := (*C.NET_TIME)(unsafe.Pointer(&tmStart))
+	tmEndTmp := (*C.NET_TIME)(unsafe.Pointer(&tmEnd))
+	fileNameTmp := C.CString(sSavedFileName)
+	ret := C.CLIENT_DownloadByTimeEx(
+		C.long(lLoginID),
+		C.int(nChannelId),
+		C.int(nRecordFileType),
+		tmStartTmp,
+		tmEndTmp,
+		fileNameTmp,
+		C.fTimeDownLoadPosCallBack(C.export_fTimeDownLoadPosCallBack2),
+		C.long(uintptr(downinfo)),
+		C.fDataCallBack(C.export_fDataCallBack2),
+		C.long(uintptr(datacb)),
+		nil,
+	)
+	C.free(unsafe.Pointer(fileNameTmp))
+	if ret == 0 {
+		return 0, Err(GetLastError())
+	}
+	return uint64(ret), nil
 }
 
 // Init account

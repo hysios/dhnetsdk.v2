@@ -4,3 +4,7 @@ bin/
 .env
 images/
 .ipynb_checkpoints/
+output_fixed.mp4
+test.dav
+
+.DS_Store

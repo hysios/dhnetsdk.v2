@@ -3,6 +3,7 @@ module github.com/hysios/dhnetsdk.v2
 go 1.14
 
 require (
+	github.com/araddon/dateparse v0.0.0-20201001162425-8aadafed4dc4
 	github.com/hysios/dhnetsdk v0.0.20
 	github.com/kr/pretty v0.2.0
 	github.com/mattn/go-colorable v0.1.7 // indirect

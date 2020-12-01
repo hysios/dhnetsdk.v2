@@ -154,6 +154,8 @@ func export_fAnalyzerDataCallBack2(lAnalyzerHandle C.long, dwAlarmType C.uint, p
 		data.Cap = int(dwBufSize)
 
 		visitor.Callback(visitor.Client, EventIvs(dwAlarmType), alarmType, buf, int(nSequence))
+	default:
+		log.Printf("alarmType %d", dwAlarmType)
 	}
 
 	return 1
@@ -220,6 +222,26 @@ func export_fTimeDownLoadPosCallBack(lPlayHandle C.long, dwTotalSize C.uint, dwD
 	}
 }
 
+//export export_fTimeDownLoadPosCallBack2
+func export_fTimeDownLoadPosCallBack2(lPlayHandle C.long, dwTotalSize C.uint, dwDownLoadSize C.int, index C.int, recordfileinfo C.NET_RECORDFILE_INFO, dwUser C.long) {
+	p := pointer.Restore(unsafe.Pointer(uintptr(dwUser)))
+
+	visitor, ok := p.(*TimeDownloadPosVisitor)
+	if !ok {
+		log.Printf("visitor nil")
+		return
+	}
+
+	info := &recordfileinfo
+	visitor.Callback(
+		visitor.UserData,
+		int(dwTotalSize),
+		int(dwDownLoadSize),
+		int(index),
+		*(*NET_RECORDFILE_INFO)(unsafe.Pointer(info)),
+	)
+}
+
 type IF_fDataCallBack interface {
 	Invoke(lRealHandle int, dwDataType uint, pBuffer []byte) int
 }
@@ -244,5 +266,19 @@ func export_fDataCallBack(lRealHandle C.long, dwDataType C.uint, pBuffer *C.ucha
 	} else {
 		log.Panicf("%T is not IF_fDataCallBack", interf)
 	}
+	return C.int(dwBufSize)
+}
+
+//export export_fDataCallBack2
+func export_fDataCallBack2(lRealHandle C.long, dwDataType C.uint, pBuffer *C.uchar, dwBufSize C.uint, dwUser C.long) C.int {
+	p := pointer.Restore(unsafe.Pointer(uintptr(dwUser)))
+
+	visitor, ok := p.(*DataCallbackVisitor)
+	if !ok {
+		log.Printf("visitor nil")
+		return 0
+	}
+	var buf = C.GoBytes(unsafe.Pointer(pBuffer), C.int(dwBufSize))
+	visitor.Callback(visitor.UserData, int(dwDataType), buf)
 	return C.int(dwBufSize)
 }

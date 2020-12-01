@@ -14,6 +14,7 @@ import (
 	"log"
 	"strconv"
 	"strings"
+	"time"
 	"unsafe"
 
 	"github.com/mattn/go-pointer"
@@ -149,4 +150,53 @@ func (client *Client) StopLoadPic() bool {
 
 	pointer.Unref(client.subscribP)
 	return StopLoadPic(client.realloadHandle)
+}
+
+func (client *Client) DownloadByTimeEx(channel int, recordFileType EM_QUERY_RECORD_TYPE, start time.Time, duration time.Duration, filename string, cb DownloadPosFunc) (*Playback, error) {
+	var playback = Playback{ch: make(chan bool), StartTime: start, Duration: duration}
+	r, err := DownloadByTimeEx(
+		client.LoginID,
+		0,
+		EM_RECORD_TYPE_ALL,
+		start,
+		duration,
+		filename,
+		&playback,
+		func(obj interface{}, total int, download int, index int, info NET_RECORDFILE_INFO) {
+			if play, ok := obj.(*Playback); ok {
+				if download == -1 {
+					play.ch <- true
+				}
+
+				if play.Callback != nil {
+					play.Callback(obj, total, download, index, info)
+				}
+			}
+		})
+	if err != nil {
+		return nil, err
+	}
+
+	playback.handle = r
+	playback.Callback = cb
+	return &playback, nil
+}
+
+type Playback struct {
+	handle    uint64
+	ch        chan bool
+	StartTime time.Time
+	Duration  time.Duration
+	Callback  DownloadPosFunc
+}
+
+func (play *Playback) Stop() error {
+	if !StopDownload(int(play.handle)) {
+		return errors.New("not stop success")
+	}
+	return nil
+}
+
+func (play *Playback) End() <-chan bool {
+	return play.ch
 }
