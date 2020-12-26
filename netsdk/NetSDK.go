@@ -566,6 +566,22 @@ func StrZ(addr uintptr) string {
 	return C.GoString((*C.char)(unsafe.Pointer(addr)))
 }
 
+func SetAutoReconnect(callback ReconnectFunc) error {
+	var v = ReconnectVisitor{
+		Client:   nil,
+		Callback: callback,
+	}
+
+	p := pointer.Save(v)
+	C.CLIENT_SetAutoReconnect(C.fHaveReConnect(C.cReConnectFunc), (C.long)(uintptr(p)))
+	return nil
+}
+
+func SetConnectTime(timeout time.Duration, times int) error {
+	C.CLIENT_SetConnectTime(C.int(timeout/time.Millisecond), C.int(times))
+	return nil
+}
+
 func (client *Client) SetAutoReconnect(callback ReconnectFunc) error {
 	var v = ReconnectVisitor{
 		Client:   client,

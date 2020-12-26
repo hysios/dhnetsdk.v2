@@ -26,7 +26,7 @@ func init() {
 	flag.StringVar(&addr, "addr", "", "大华设备地址")
 	flag.StringVar(&user, "user", "", "大华设备登陆帐号")
 	flag.StringVar(&pass, "pass", "", "大华设备登陆密码")
-	flag.Set("addr", "192.168.1.190:37777")
+	flag.Set("addr", "192.168.1.108:37777")
 	flag.Set("user", "admin")
 	flag.Set("pass", "admin123")
 }
@@ -34,15 +34,20 @@ func init() {
 func main() {
 	flag.Parse()
 
-	err := netsdk.InitEx(nil)
+	err := netsdk.InitEx(func(ip string, port int) {
+		log.Printf("disconnect %s %d", ip, port)
+	})
 	if err != nil {
 		log.Fatalf("init netsdk error %s\n", err)
 	}
 	fmt.Println("Init NetSDK success")
 	defer netsdk.Cleanup()
-	var search netsdk.Search
-	searchAllClients(&search)
-
+	// var search netsdk.Search
+	// searchAllClients(&search)
+	netsdk.SetAutoReconnect(func(client *netsdk.Client, ip string, port int) {
+		log.Printf("reconnect ip %s %d", ip, port)
+	})
+	// netsdk.SetConnectTime(10*time.Second, -1)
 	client, err := netsdk.Login(addr, user, pass)
 	if err != nil {
 		log.Fatalf("login failed %s", err)
