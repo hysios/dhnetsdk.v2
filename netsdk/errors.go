@@ -898,3 +898,45 @@ func Err(code int) error {
 		return errors.New("未知错误")
 	}
 }
+
+func LoginErr(code int) error {
+	switch code {
+	case -1:
+		return errors.New("device not support high level security login")
+	case 0:
+		return errors.New("no error")
+	case 1:
+		return errors.New("username or passwd invalid")
+	case 2:
+		return errors.New("user not exist")
+	case 3:
+		return errors.New("timeout")
+	case 4:
+		return errors.New("repeat login")
+	case 5:
+		return errors.New("account has been locked")
+	case 6:
+		return errors.New("the account has been blacklisted")
+	case 7:
+		return errors.New("system busy, insufficient resources")
+	case 8:
+		return errors.New("sub socket connect fail")
+	case 9:
+		return errors.New("main socket connect fail")
+	case 10:
+		return errors.New("exceed max num of connections")
+	case 11:
+		return errors.New("device only support third protocol login")
+	case 12:
+		return errors.New("device not insert U shield or U shiled info invalid")
+	case 13:
+		return errors.New("client ip address is not permit to login")
+	case 18:
+		return errors.New("device does not been initialized,so cannot be login")
+	case 19:
+		return errors.New("limited login")
+	case 20:
+		return errors.New("device only support high level security login")
+	}
+	return nil
+}

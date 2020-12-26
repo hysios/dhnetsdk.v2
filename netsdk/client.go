@@ -65,6 +65,9 @@ func Login(addr string, user, pass string, opts ...LogOptionFunc) (ncli *Client,
 		LoginID:    id,
 		DeviceInfo: outParam.ST_stDeviceInfo,
 	}
+	if id == 0 {
+		return nil, LoginErr(int(outParam.ST_nError))
+	}
 	return ncli, nil
 }
 

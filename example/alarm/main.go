@@ -52,6 +52,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("login failed %s", err)
 	}
+	defer client.Logout()
 
 	pp.Printf("client %s", client.DeviceInfo)
 
