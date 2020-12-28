@@ -18,23 +18,57 @@ type ST_fServiceCallBack struct {
 }
 
 func (p *ST_fServiceCallBack) Invoke(lHandle int, pIp string, wPort uint16, lCommand int, pParam uintptr, dwParamLen int) int {
-	if netsdk.NET_DVR_SERIAL_RETURN == lCommand {
+	switch lCommand {
+	case netsdk.NET_DVR_SERIAL_RETURN:
 		sn := C.GoString((*C.char)(unsafe.Pointer(pParam)))
-		fmt.Println("Device register to server:", lHandle, pIp, wPort, sn)
-		// if deviceId == sn {
-		// 	go commonAlarm(pIp, int(wPort), username, passwd, sn)
-		// }
-		// client, err := netsdk.Login(fmt.Sprintf("%s:%d", pIp, wPort), "admin", "admin123",
-		// 	netsdk.LoginMode(netsdk.EM_LOGIN_SPEC_CAP_SERVER_CONN),
-		// 	netsdk.LoginActive(sn))
+		log.Println("Device register to server:", lHandle, pIp, wPort, sn)
+		// addr := fmt.Sprintf("%s:%d", "192.168.1.108", 37777)
+		// client, err := netsdk.Login(addr, "admin", "admin123")
 		// if err != nil {
-		// 	log.Printf("error %s\n", err)
+		// 	log.Printf("login error %s", err)
 		// }
-		// log.Printf("client % #v\n", pretty.Formatter(client))
-		// log.Printf("client serialNumber %s\n", string(client.DeviceInfo.ST_sSerialNumber[:]))
+		err := netsdk.ResponseDevReg(sn, pIp, int(wPort))
+		if err != nil {
+			log.Printf("response dev reg error %s", err)
+			return 0
+		}
+
+		log.Printf("注册成功")
+		var (
+			inParam  netsdk.NET_IN_LOGIN_WITH_HIGHLEVEL_SECURITY
+			outParam netsdk.NET_OUT_LOGIN_WITH_HIGHLEVEL_SECURITY
+		)
+		inParam.ST_dwSize = uint32(unsafe.Sizeof(inParam))
+		copy(inParam.ST_szIP[:], []byte(pIp))
+		inParam.ST_nPort = int32(wPort)
+		copy(inParam.ST_szUserName[:], []byte("admin"))
+		copy(inParam.ST_szPassword[:], []byte("admin123"))
+		inParam.ST_emSpecCap = netsdk.EM_LOGIN_SPEC_CAP_SERVER_CONN
+		inParam.ST_pCapParam = pParam
+		loginId := netsdk.LoginWithHighLevelSecurity(&inParam, &outParam)
+		log.Printf("loginId %d", loginId)
+		// addr := fmt.Sprintf("%s:%d", pIp, wPort)
+		// client, err := netsdk.Login(addr, "admin", "admin123")
+		// if err != nil {
+		// 	log.Printf("login error %s", err)
+		// }
+		// // client := netsdk.Client{LoginID: lHandle}
+
+		// log.Printf("client %#v", client)
+		// client.Reboot()
+		// addr := fmt.Sprintf("%s:%d", pIp, )
+		// netsdk.Login(pIp, int(wPort))
+	case netsdk.NET_DEV_AUTOREGISTER_RETURN:
+		sn := C.GoString((*C.char)(unsafe.Pointer(pParam)))
+		log.Println("Device autoregister to server:", lHandle, pIp, wPort, sn)
+	case netsdk.NET_DVR_DISCONNECT:
+		sn := C.GoString((*C.char)(unsafe.Pointer(pParam)))
+		log.Println("Device disconnect to server:", lHandle, pIp, wPort, sn)
+	default:
+		log.Printf("other command %d", lCommand)
 	}
 
-	return 0
+	return 1
 }
 
 var (

@@ -185,6 +185,10 @@ func (client *Client) DownloadByTimeEx(channel int, recordFileType EM_QUERY_RECO
 	return &playback, nil
 }
 
+func (client *Client) Reboot() error {
+	return Reboot(client.LoginID)
+}
+
 type Playback struct {
 	handle    uint64
 	ch        chan bool

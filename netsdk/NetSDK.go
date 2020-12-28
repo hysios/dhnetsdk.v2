@@ -48,6 +48,7 @@ package netsdk
 import "C"
 
 import (
+	"errors"
 	"log"
 	"time"
 	"unsafe"
@@ -156,7 +157,7 @@ func GetLastError() int {
 }
 
 // Login Ex API
-func LoginEx2(pchDVRIP string, wDVRPort int, UserName string, Password string) int {
+func LoginEx2(pchDVRIP string, wDVRPort int, UserName string, Password string, mode EM_LOGIN_SPAC_CAP_TYPE) int {
 	log.Println("Enter NET_LoginEx2")
 	pCapParam := unsafe.Pointer(uintptr(0))
 	lpDeviceInfo := C.struct_tagNET_DEVICEINFO_Ex{}
@@ -170,7 +171,7 @@ func LoginEx2(pchDVRIP string, wDVRPort int, UserName string, Password string) i
 		C.ushort(wDVRPort),
 		UserNameTmp,
 		PasswdTmp,
-		C.EM_LOGIN_SPEC_CAP_TCP,
+		C.EM_LOGIN_SPAC_CAP_TYPE(mode),
 		pCapParam,
 		&lpDeviceInfo,
 		&error)
@@ -611,4 +612,20 @@ func (client *Client) SetDVRMessCallBack(callback DVRMessageFunc) error {
 
 	C.CLIENT_SetDVRMessCallBack(C.fMessCallBack(C.cMessCallBack), (C.long)(uintptr(p)))
 	return nil
+}
+
+func Reboot(lloginID int) error {
+	C.CLIENT_ControlDevice(C.long(lloginID), C.CtrlType(0), nil, 5000)
+	return nil
+}
+
+func ResponseDevReg(sn string, ip string, port int) error {
+	ret := C.CLIENT_ResponseDevReg(C.CString(sn), C.CString(ip), C.ushort(port), C.int(1))
+	if ret > 0 {
+		log.Printf("成功")
+		return nil
+	}
+
+	return errors.New("response error")
+	// panic("nonimplement")
 }
