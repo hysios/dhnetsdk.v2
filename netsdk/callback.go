@@ -154,6 +154,24 @@ func export_fAnalyzerDataCallBack2(lAnalyzerHandle C.long, dwAlarmType C.uint, p
 		data.Cap = int(dwBufSize)
 
 		visitor.Callback(visitor.Client, EventIvs(dwAlarmType), alarmType, buf, int(nSequence))
+	case EVENT_IVS_TRAFFICJUNCTION:
+		alarmType := (*DEV_EVENT_TRAFFICJUNCTION_INFO)(unsafe.Pointer(uintptr(pAlarmInfo)))
+		var buf []byte
+		data := (*reflect.SliceHeader)(unsafe.Pointer(&buf))
+		data.Data = uintptr(unsafe.Pointer(uintptr(pBuffer)))
+		data.Len = int(dwBufSize)
+		data.Cap = int(dwBufSize)
+
+		visitor.Callback(visitor.Client, EventIvs(dwAlarmType), alarmType, buf, int(nSequence))
+	case EVENT_TRAFFICSNAPSHOT:
+		alarmType := (*DEV_EVENT_TRAFFICSNAPSHOT_INFO)(unsafe.Pointer(uintptr(pAlarmInfo)))
+		var buf []byte
+		data := (*reflect.SliceHeader)(unsafe.Pointer(&buf))
+		data.Data = uintptr(unsafe.Pointer(uintptr(pBuffer)))
+		data.Len = int(dwBufSize)
+		data.Cap = int(dwBufSize)
+
+		visitor.Callback(visitor.Client, EventIvs(dwAlarmType), alarmType, buf, int(nSequence))
 	default:
 		log.Printf("alarmType %d", dwAlarmType)
 	}

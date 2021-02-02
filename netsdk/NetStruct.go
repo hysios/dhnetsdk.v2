@@ -12,6 +12,7 @@ type DWORD = uint32
 type WORD = uint16
 type BYTE = byte
 type BOOL = int32
+type SHORT = int16
 
 type NETSDK_INIT_PARAM struct {
 	ST_bReserved  [1024]byte "保留字节"
@@ -25,6 +26,7 @@ const (
 	EVENT_IVS_CROSSLINEDETECTION             = 0x00000002 // 警戒线事件(对应 DEV_EVENT_CROSSLINE_INFO)
 	EVENT_IVS_CROSSREGIONDETECTION           = 0x00000003 // 警戒区事件(对应 DEV_EVENT_CROSSREGION_INFO)
 	EVENT_IVS_TRAFFICJUNCTION                = 0x00000017 // 交通路口事件----老规则(对应 DEV_EVENT_TRAFFICJUNCTION_INFO)
+	EVENT_TRAFFICSNAPSHOT                    = 0x00000019
 	EVENT_IVS_TRAFFIC_PARKING                = 0x00000108
 	EVENT_ALARM_MOTIONDETECT                 = 0x0000011C // 视频移动侦测事件(对应 DEV_EVENT_ALARM_INFO)
 )
@@ -2247,4 +2249,57 @@ type DEV_EVENT_TRAFFIC_PARKING_INFO struct {
 	ST_bReserved           [228]byte                         // 保留字节,留待扩展.
 	ST_stTrafficCar        DEV_EVENT_TRAFFIC_TRAFFICCAR_INFO // 交通车辆信息
 	ST_stCommInfo          EVENT_COMM_INFO                   // 公共信息
+}
+
+// event file info
+type DH_EVENT_FILE_INFO struct {
+	ST_bCount      BYTE        // the file count in the current file's group
+	ST_bIndex      BYTE        // the index of the file in the group
+	ST_bFileTag    BYTE        // file tag, see the enum struct EM_EVENT_FILETAG
+	ST_bFileType   BYTE        // file type,0-normal 1-compose 2-cut picture
+	ST_stuFileTime NET_TIME_EX // file time
+	ST_nGroupId    DWORD       // the only id of one group file
+}
+
+type DH_SIG_CARWAY_INFO struct {
+	ST_snSpeed      SHORT   // current car speed,km/h
+	ST_snCarLength  SHORT   // current car length, dm
+	ST_fRedTime     float32 // current red light time, s.ms
+	ST_fCapTime     float32 // current car way snapshot time, s.ms
+	ST_bSigSequence BYTE    // current snapshot Sequence
+	ST_bType        BYTE    // current snapshot type
+	// 0: radar up speed limit;1: radar low speed limit;2: car detector up speed limit;3:car detector low speed limit
+	// 4: reverse;5: break red light;6: red light on;7: red light off;8: snapshot or traffic gate
+	ST_bDirection  BYTE     // breaking type :01:left turn;02:straight;03:right
+	ST_bLightColor BYTE     // current car way traffic light state,0: green, 1: red, 2: yellow
+	ST_bSnapFlag   [16]BYTE // snap flag from device
+}
+
+// car way info
+type DH_CARWAY_INFO struct {
+	ST_bCarWayID  BYTE                                       // current car way id
+	ST_bReserve   [2]BYTE                                    // reserved
+	ST_bSigCount  BYTE                                       // being snapshotted
+	ST_stuSigInfo [DH_MAX_SNAP_SIGNAL_NUM]DH_SIG_CARWAY_INFO // the snapshot info
+	ST_bReserved  [12]BYTE                                   // reserved
+}
+
+//the describe of DEV_EVENT_TRAFFICSNAPSHOT_INFO's data
+type DEV_EVENT_TRAFFICSNAPSHOT_INFO struct {
+	ST_nChannelID     int                               // ChannelId
+	ST_szName         [128]BYTE                         // event name
+	ST_bReserved1     [4]BYTE                           // byte alignment
+	ST_PTS            float64                           // PTS(ms)
+	ST_UTC            NET_TIME_EX                       // the event happen time
+	ST_nEventID       int                               // event ID
+	ST_bReserv        [3]BYTE                           // reserved
+	ST_bCarWayCount   BYTE                              // car way number being snapshotting
+	ST_stuCarWayInfo  [DH_MAX_CARWAY_NUM]DH_CARWAY_INFO // car way info being snapshotting
+	ST_stuFileInfo    DH_EVENT_FILE_INFO                // event file info
+	ST_bEventAction   BYTE                              // Event action,0 means pulse event,1 means continuous event's begin,2means continuous event's end;
+	ST_byReserved     [2]BYTE
+	ST_byImageIndex   BYTE            // Serial number of the picture, in the same time (accurate to seconds) may have multiple images, starting from 0
+	ST_dwSnapFlagMask DWORD           // flag(by bit),see NET_RESERVED_COMMON
+	ST_bReserved      [344]BYTE       // Reserved
+	ST_stCommInfo     EVENT_COMM_INFO // public info
 }

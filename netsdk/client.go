@@ -136,7 +136,7 @@ func (client *Client) RealLoadPictureEx(channel int, evt EventIvs, callback Pict
 	if lAnalyzerHandle != 0 {
 		log.Println("CLIENT_RealLoadPictureEx success")
 	} else {
-		return errors.New("can't realloadPicture")
+		return Err(GetLastError())
 	}
 
 	client.subscribP = p

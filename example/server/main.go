@@ -10,6 +10,7 @@ import (
 	"unsafe"
 
 	"github.com/hysios/dhnetsdk.v2/netsdk"
+	"github.com/kr/pretty"
 )
 
 // implement interface IF_fServiceCallBack
@@ -47,6 +48,15 @@ func (p *ST_fServiceCallBack) Invoke(lHandle int, pIp string, wPort uint16, lCom
 		inParam.ST_pCapParam = pParam
 		loginId := netsdk.LoginWithHighLevelSecurity(&inParam, &outParam)
 		log.Printf("loginId %d", loginId)
+		log.Printf("device % #v", pretty.Formatter(outParam.ST_stDeviceInfo))
+		analyHandle := netsdk.RealLoadPictureEx(int64(loginId), 1, uint32(netsdk.EVENT_IVS_ALL), 1, func(lAnalyzerHandle netsdk.LLONG, dwAlarmType netsdk.DWORD, pAlarmInfo netsdk.LLONG,
+			pBuffer netsdk.LLONG, dwBufSize netsdk.DWORD, dwUser netsdk.LLONG, nSequence int32, reserved netsdk.LLONG) {
+			log.Printf("anaylerhanadler %d, alarmType %d", lAnalyzerHandle, dwAlarmType)
+		})
+		if analyHandle == 0 {
+			log.Printf("realload picture faild %s", netsdk.Err(netsdk.GetLastError()))
+			return 0
+		}
 		// addr := fmt.Sprintf("%s:%d", pIp, wPort)
 		// client, err := netsdk.Login(addr, "admin", "admin123")
 		// if err != nil {

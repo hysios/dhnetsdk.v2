@@ -89,6 +89,68 @@ func main() {
 					saveJson(jsonfile, info)
 					fmt.Println("globalfilename-----", globalfilename)
 				}
+
+			case netsdk.EVENT_IVS_TRAFFICJUNCTION:
+				if info, ok := alarmInfo.(*netsdk.DEV_EVENT_TRAFFICJUNCTION_INFO); ok {
+					globalfilename := fmt.Sprintf("images/%04d%02d%02d-%02d%02d%02d%04d-%d_%s",
+						info.ST_UTC.ST_dwYear,
+						info.ST_UTC.ST_dwMonth,
+						info.ST_UTC.ST_dwDay,
+						info.ST_UTC.ST_dwHour,
+						info.ST_UTC.ST_dwMinute,
+						info.ST_UTC.ST_dwSecond,
+						info.ST_UTC.ST_dwMillisecond,
+						info.ST_stuObject.ST_nObjectID,
+						"big.jpg")
+					file, err := os.OpenFile(globalfilename, os.O_CREATE|os.O_WRONLY, 0666)
+					if err != nil {
+						fmt.Println("Error OpenFile ")
+					}
+					defer file.Close()
+
+					n, err := file.Write(frame)
+					_ = n
+					jsonfile := strings.TrimSuffix(globalfilename, "jpg") + ".json"
+
+					saveJson(jsonfile, info)
+					fmt.Printf("%s\n", netsdk.Str(info.ST_szName[:]))
+					fmt.Printf("ObjectType %s\n", netsdk.Str(info.ST_stuObject.ST_szObjectType[:]))
+					fmt.Printf("PlateNumber %s\n", netsdk.Str(info.ST_stuObject.ST_szText[:]))
+					fmt.Printf("frame size %d\n", len(frame))
+
+					// pp.Printf("info %s", info)
+				}
+
+			case netsdk.EVENT_TRAFFICSNAPSHOT:
+				if info, ok := alarmInfo.(*netsdk.DEV_EVENT_TRAFFICSNAPSHOT_INFO); ok {
+
+					// fmt.Printf("%s, %d\n", netsdk.Str(info.ST_stuObject.ST_szObjectType[:]), info.ST_stuObject.ST_nObjectID)
+					// fmt.Printf("%s, %s\n", netsdk.Str(info.ST_stuVehicle.ST_szObjectType[:]), netsdk.Str(info.ST_stuVehicle.ST_szObjectSubType[:]))
+					// fmt.Printf("PlateNumber %s\n", netsdk.Str(info.ST_stTrafficCar.ST_szPlateNumber[:]))
+					// fmt.Printf("frame size %d\n", len(frame))
+					// // fmt.Printf("info %#v\n", info)
+
+					// 	info.ST_UTC.ST_dwYear,
+					// 	info.ST_UTC.ST_dwMonth,
+					// 	info.ST_UTC.ST_dwDay,
+					// 	info.ST_UTC.ST_dwHour,
+					// 	info.ST_UTC.ST_dwMinute,
+					// 	info.ST_UTC.ST_dwSecond,
+					// 	info.ST_UTC.ST_dwMillisecond,
+					// 	info.ST_stuObject.ST_nObjectID,
+					// 	"big.jpg")
+					// file, err := os.OpenFile(globalfilename, os.O_CREATE|os.O_WRONLY, 0666)
+					// if err != nil {
+					// 	fmt.Println("Error OpenFile ")
+					// }
+					// defer file.Close()
+
+					// n, err := file.Write(frame)
+					// _ = n
+
+					pp.Printf("info %s", info)
+					// fmt.Println("globalfilename-----", globalfilename)
+				}
 			}
 			return 0
 		},
@@ -100,7 +162,7 @@ func main() {
 	}
 }
 
-func saveJson(filename string, info *netsdk.DEV_EVENT_TRAFFIC_PARKING_INFO) error {
+func saveJson(filename string, info interface{}) error {
 	f, err := os.OpenFile(filename, os.O_CREATE|os.O_WRONLY, 06666)
 	if err != nil {
 		return err
