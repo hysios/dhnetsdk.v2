@@ -62,10 +62,10 @@ func main() {
 			case netsdk.EVENT_IVS_TRAFFIC_PARKING:
 				if info, ok := alarmInfo.(*netsdk.DEV_EVENT_TRAFFIC_PARKING_INFO); ok {
 
-					fmt.Printf("%s, %d\n", netsdk.Str(info.ST_stuObject.ST_szObjectType[:]), info.ST_stuObject.ST_nObjectID)
-					fmt.Printf("%s, %s\n", netsdk.Str(info.ST_stuVehicle.ST_szObjectType[:]), netsdk.Str(info.ST_stuVehicle.ST_szObjectSubType[:]))
-					fmt.Printf("PlateNumber %s\n", netsdk.Str(info.ST_stTrafficCar.ST_szPlateNumber[:]))
-					fmt.Printf("frame size %d\n", len(frame))
+					log.Printf("%s, %d\n", netsdk.Str(info.ST_stuObject.ST_szObjectType[:]), info.ST_stuObject.ST_nObjectID)
+					log.Printf("%s, %s\n", netsdk.Str(info.ST_stuVehicle.ST_szObjectType[:]), netsdk.Str(info.ST_stuVehicle.ST_szObjectSubType[:]))
+					log.Printf("PlateNumber %s\n", netsdk.Str(info.ST_stTrafficCar.ST_szPlateNumber[:]))
+					log.Printf("frame size %d\n", len(frame))
 					// fmt.Printf("info %#v\n", info)
 					globalfilename := fmt.Sprintf("images/%04d%02d%02d-%02d%02d%02d%04d-%d_%s",
 						info.ST_UTC.ST_dwYear,
@@ -113,10 +113,10 @@ func main() {
 					jsonfile := strings.TrimSuffix(globalfilename, "jpg") + ".json"
 
 					saveJson(jsonfile, info)
-					fmt.Printf("%s\n", netsdk.Str(info.ST_szName[:]))
-					fmt.Printf("ObjectType %s\n", netsdk.Str(info.ST_stuObject.ST_szObjectType[:]))
-					fmt.Printf("PlateNumber %s\n", netsdk.Str(info.ST_stuObject.ST_szText[:]))
-					fmt.Printf("frame size %d\n", len(frame))
+					log.Printf("%s\n", netsdk.Str(info.ST_szName[:]))
+					log.Printf("ObjectType %s\n", netsdk.Str(info.ST_stuObject.ST_szObjectType[:]))
+					log.Printf("PlateNumber %s\n", netsdk.Str(info.ST_stuObject.ST_szText[:]))
+					log.Printf("frame size %d\n", len(frame))
 
 					// pp.Printf("info %s", info)
 				}

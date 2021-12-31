@@ -60,7 +60,7 @@ func Login(addr string, user, pass string, opts ...LogOptionFunc) (ncli *Client,
 	copy(inParam.ST_szPassword[:], []byte(pass))
 
 	id := LoginWithHighLevelSecurity(&inParam, &outParam)
-
+	log.Printf("outParam %#v", outParam)
 	ncli = &Client{
 		LoginID:    id,
 		DeviceInfo: outParam.ST_stDeviceInfo,
