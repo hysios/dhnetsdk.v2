@@ -1,0 +1,380 @@
+make all --print-data-base --no-builtin-variables --no-builtin-rules --question
+# GNU Make 3.81
+# Copyright (C) 2006  Free Software Foundation, Inc.
+# This is free software; see the source for copying conditions.
+# There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE.
+
+# This program built for i386-apple-darwin11.3.0
+
+# Make data base, printed on Thu Sep 14 11:48:14 2023
+
+# Variables
+
+# automatic
+<D = $(patsubst %/,%,$(dir $<))
+# automatic
+?F = $(notdir $?)
+# environment
+ELECTRON_NO_ATTACH_CONSOLE = 1
+# environment
+VSCODE_CRASH_REPORTER_PROCESS_TYPE = extensionHost
+# environment
+WXWORK_TEST_TIMESTAMP = 1409659589
+# environment
+WXWORK_CORP_SECRET = xMgpfugnqbn2cl8J9OQqIRaGGfxq_zw4vTzgAEKlQdI
+# environment
+NVM_INC = /Users/hysios/.nvm/versions/node/v16.19.0/include/node
+# automatic
+?D = $(patsubst %/,%,$(dir $?))
+# environment
+WXWORK_SUITE_ACCESS_TOKEN = FPmsaUuf8mkwOOQhPCydddVZbETUSR38oxEb59c1Kvr4wiTXRuFOw6vbvyfLe2zOfuA65863rMArJlESD7b89SS8FbUN1lrUQbI14-aJVOxSJeJKgSb0Q-lZnMBUKi-3
+# automatic
+@D = $(patsubst %/,%,$(dir $@))
+# automatic
+@F = $(notdir $@)
+# makefile
+CURDIR := /Users/hysios/Projects/cspdls/dhnetsdk2
+# makefile
+SHELL = /bin/sh
+# environment
+VSCODE_NLS_CONFIG = {"locale":"zh-cn","osLocale":"zh-cn","availableLanguages":{"*":"zh-cn"},"_languagePackId":"46bc6af6de3e9080f75bbcb450c7e155.zh-cn","_translationsConfigFile":"/Users/hysios/Library/Application Support/Code/clp/46bc6af6de3e9080f75bbcb450c7e155.zh-cn/tcf.json","_cacheRoot":"/Users/hysios/Library/Application Support/Code/clp/46bc6af6de3e9080f75bbcb450c7e155.zh-cn","_resolvedLanguagePackCoreLocation":"/Users/hysios/Library/Application Support/Code/clp/46bc6af6de3e9080f75bbcb450c7e155.zh-cn/8b617bd08fd9e3fc94d14adb8d358b56e3f72314","_corruptedFile":"/Users/hysios/Library/Application Support/Code/clp/46bc6af6de3e9080f75bbcb450c7e155.zh-cn/corrupted.info","_languagePackSupport":true}
+# environment
+_ = /usr/bin/make
+# makefile (from `Makefile', line 1)
+MAKEFILE_LIST :=  Makefile
+# environment
+VSCODE_AMD_ENTRYPOINT = vs/workbench/api/node/extensionHostProcess
+# environment
+AUTOJUMP_SOURCED = 1
+# environment
+FIG_SET_PARENT_CHECK = 1
+# environment
+__CFBundleIdentifier = com.microsoft.VSCode
+# environment
+INFOPATH = /opt/homebrew/share/info:
+# environment
+WXWORK_SUITE_TICKET = v0cC600i2r8cc61l07ODz6OhK2e9uAhuWPeXVQZxzCAHLSn1sioGJBCsI5sTA_ff
+# environment
+VSCODE_CWD = /Users/hysios/Projects/cspdls/dhnetsdk2
+# environment
+GOPROXY = https://goproxy.cn,direct
+# environment
+WXWORK_TEST_MSGSIGN = 5c45ff5e21c57e6ad56bac8758b79b1d9ac89fd3
+# environment
+PATH = /Users/hysios/Projects/dhnetsdk2/.venv/bin:/Users/hysios/Library/Android/sdk/platform-tools:/Users/hysios/Library/Android/sdk/emulator:/opt/homebrew/opt/openjdk/bin:/Users/hysios/.pyenv/shims:/Users/hysios/.pyenv/bin:/Users/hysios/.nvm/versions/node/v16.19.0/bin:/Users/hysios/android/bin:/Users/hysios/bin/crossgfw:/Users/hysios/.local/bin:/Users/hysios/go/bin:/Users/hysios/Scripts:/Users/hysios/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/Users/hysios/.cargo/bin:/Users/hysios/.fig/bin:/Users/hysios/.local/bin
+# environment
+WXWORK_TEST_ENCODING_AESKEY = jWmYm7qr5nMoAUwZRjGtBxmz3KA1tkAj3ykkR6q2B2C
+# environment
+LSCOLORS = Gxfxcxdxbxegedabagacad
+# environment
+VIRTUAL_ENV = /Users/hysios/Projects/dhnetsdk2/.venv
+# environment
+WXWORK_TEST_RECEIVER_ID = wx5823bf96d3bd56c7
+# environment
+WXWORK_ENCODING_AESKEY = VvYVYZmoHO4f2Cp5jDskr3492zdi3E3kLVjDnETUn1a
+# environment
+GOPATH = /Users/hysios/go
+# environment
+NVM_BIN = /Users/hysios/.nvm/versions/node/v16.19.0/bin
+# environment
+LaunchInstanceID = 91EBE9E6-A9E9-4B01-B11A-05219FFF2662
+# environment
+ELECTRON_RUN_AS_NODE = 1
+# environment
+PYENV_ROOT = /Users/hysios/.pyenv
+# default
+.FEATURES := target-specific order-only second-expansion else-if archives jobserver check-symlink
+# environment
+LS_COLORS = di=1;36:ln=35:so=32:pi=33:ex=31:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43
+# environment
+WXWORK_SUITE_ID = dkd75cb1d032f6473b
+# environment
+SSH_AUTH_SOCK = /private/tmp/com.apple.launchd.Vw08x9Y7BU/Listeners
+# automatic
+%F = $(notdir $%)
+# environment
+WXWORK_MEDIA_ID = 3hmS2Me7N1dhSEzCkGW9fQ2DK8zvotzDWDo3bEs9tf7aBlcuzR4wNg5jK41MW8ECt
+# environment
+TTY = /dev/ttys031
+# environment
+OPENAI_API_KEY = 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
+# environment
+_OLD_VIRTUAL_PS1 = %(?:%{[01;32m%}➜ :%{[01;31m%}➜ ) %{[36m%}%c%{[00m%} $(git_prompt_info)
+# environment
+FIG_PID = 55661
+# environment
+PWD = /Users/hysios/Projects/cspdls/dhnetsdk2
+# environment
+LC_FIG_SET_PARENT = 1d00e4e8-e0dc-47e0-9d85-5190bfe66b14
+# environment
+HOMEBREW_CELLAR = /opt/homebrew/Cellar
+# environment
+ORIGINAL_XDG_CURRENT_DESKTOP = undefined
+# environment
+WXWORK_ACCESS_TOKEN = jGPMbZzJbvBEYSJb13YGJnHTKl-bCKwftObm6S1dx6NtFRDG2JcIG6lKJtCHtXY7hi9qQvv2758SQizaDHPsaF1Oii-hSreLYsD3iUc_mQFhdh4F8rb-mggmqFjcJKDtgYt0oJl8rQnXSF9fx79lwFC2VX9JtAN06sQHRVUjGyOltiSdD-KDD9bZGJxnbx2oOrXtK04upG_K4Az3QTpbDQ
+# environment
+MANPATH = /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/share/man:/Library/Developer/CommandLineTools/usr/share/man:/Library/Developer/CommandLineTools/Toolchains/XcodeDefault.xctoolchain/usr/share/man:/Users/hysios/.nvm/versions/node/v16.19.0/share/man:/opt/homebrew/share/man::
+# environment
+GOMODCACHE = /Users/hysios/go/pkg/mod
+# environment
+PYENV_SHELL = zsh
+# environment
+HOME = /Users/hysios
+# default
+MAKEFILEPATH = $(shell /usr/bin/xcode-select -print-path 2>/dev/null || echo /Developer)/Makefiles
+# environment
+VSCODE_CLI = 1
+# environment
+VSCODE_CODE_CACHE_PATH = /Users/hysios/Library/Application Support/Code/CachedData/8b617bd08fd9e3fc94d14adb8d358b56e3f72314
+# environment
+LOGNAME = hysios
+# environment
+APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = 1
+# environment
+NVM_CD_FLAGS = -q
+# environment
+WXWORK_SUITE_SECRET = xMgpfugnqbn2cl8J9OQqIRaGGfxq_zw4vTzgAEKlQdI
+# environment
+ZSH = /Users/hysios/.oh-my-zsh
+# environment
+WXWORK_OPEN_KFID = wkVZwKFQAAJ1f-8pbNiZB7BwrVzBDzVA
+# environment
+VSCODE_HANDLES_UNCAUGHT_ERRORS = true
+# automatic
+^D = $(patsubst %/,%,$(dir $^))
+# environment
+XPC_FLAGS = 0x0
+# environment
+COLORTERM = truecolor
+# default
+MAKE = $(MAKE_COMMAND)
+# environment
+LC_TERMINAL = iTerm2
+# environment
+ANDROID_NDK_HOME = /Users/hysios/Library/Android/sdk/ndk-bundle
+# environment
+SHLVL = 3
+# environment
+FIG_TERM = 2.16.0
+# environment
+WXWORK_TEST_ECHOSTR = P9nAzCzyDtyTWESHep1vC5X9xho/qYX3Zpb4yKa9SKld1DsH3Iyt3tP3zNdtp+4RPcs8TgAE7OaBO+FZXvnaqQ==
+# default
+MAKE_VERSION := 3.81
+# environment
+USER = hysios
+# makefile
+.DEFAULT_GOAL := dev
+# default
+MAKECMDGOALS := all
+# environment
+TERM_SESSION_ID = w0t13p0:ECA897F0-A18E-415A-8476-376D39F47AF7
+# environment
+LESS = -R
+# automatic
+%D = $(patsubst %/,%,$(dir $%))
+# default
+MAKE_COMMAND := /Library/Developer/CommandLineTools/usr/bin/make
+# environment
+MallocProbGuardViaLaunchd = 1
+# environment
+TERM_PROGRAM = iTerm.app
+# default
+.VARIABLES := 
+# environment
+TMPDIR = /var/folders/tk/kj5b725534g7l3tp5_xfcj0w0000gn/T/
+# automatic
+*F = $(notdir $*)
+# environment
+VSCODE_IPC_HOOK = /Users/hysios/Library/Application Support/Code/1.82-main.sock
+# environment
+MallocNanoZone = 0
+# makefile
+MAKEFLAGS = Rrqp
+# environment
+MFLAGS = -Rrqp
+# automatic
+*D = $(patsubst %/,%,$(dir $*))
+# environment
+TERM_PROGRAM_VERSION = 3.4.20
+# environment
+NVM_DIR = /Users/hysios/.nvm
+# environment
+XPC_SERVICE_NAME = application.com.microsoft.VSCode.65196452.65196458.D84E672E-028B-4623-942E-BFECAE8D7EDD
+# environment
+LC_TERMINAL_VERSION = 3.4.20
+# environment
+HOMEBREW_PREFIX = /opt/homebrew
+# automatic
++D = $(patsubst %/,%,$(dir $+))
+# environment
+WXWORK_TEMPLATE_ID = dkd75cb1d032f6473b
+# automatic
++F = $(notdir $+)
+# environment
+ITERM_SESSION_ID = w0t13p0:ECA897F0-A18E-415A-8476-376D39F47AF7
+# environment
+WXWORK_TEST_NONCE = 263014780
+# environment
+HOMEBREW_REPOSITORY = /opt/homebrew
+# environment
+COLORFGBG = 7;0
+# environment
+__CF_USER_TEXT_ENCODING = 0x1F5:0x19:0x34
+# environment
+COMMAND_MODE = unix2003
+# default
+MAKEFILES := 
+ 
+make: *** No rule to make target `all'.  Stop.
+
+# environment
+_OLD_VIRTUAL_PATH = /Users/hysios/Library/Android/sdk/platform-tools:/Users/hysios/Library/Android/sdk/emulator:/opt/homebrew/opt/openjdk/bin:/Users/hysios/.pyenv/shims:/Users/hysios/.pyenv/bin:/Users/hysios/.nvm/versions/node/v16.19.0/bin:/Users/hysios/android/bin:/Users/hysios/bin/crossgfw:/Users/hysios/.local/bin:/Users/hysios/go/bin:/Users/hysios/Scripts:/Users/hysios/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/Users/hysios/.cargo/bin:/Users/hysios/.fig/bin:/Users/hysios/.local/bin
+# automatic
+<F = $(notdir $<)
+# environment
+ITERM_PROFILE = Default
+# environment
+GOPRIVATE = github.com/hnhuaxi/*
+# environment
+PAGER = less
+# environment
+ANDROID_SDK_ROOT = /Users/hysios/Library/Android/sdk
+# environment
+LC_ALL = C
+# environment
+FIGTERM_SESSION_ID = 1d00e4e8-e0dc-47e0-9d85-5190bfe66b14
+# environment
+SECURITYSESSIONID = 18826
+# automatic
+^F = $(notdir $^)
+# environment
+WXWORK_TEMPLATE_SECRET = xMgpfugnqbn2cl8J9OQqIRaGGfxq_zw4vTzgAEKlQdI
+# environment
+WXWORK_CORP_ID = dkd75cb1d032f6473b
+# default
+SUFFIXES := 
+# environment
+FIG_SET_PARENT = 1d00e4e8-e0dc-47e0-9d85-5190bfe66b14
+# environment
+WXWORK_TEST_TOKEN = QDG6eK
+# environment
+MAKELEVEL := 0
+# environment
+AUTOJUMP_ERROR_PATH = /Users/hysios/Library/autojump/errors.log
+# environment
+WXWORK_TOKEN = Ei2SQ
+# environment
+LANG = C
+# environment
+TERM = xterm-256color
+# environment
+VSCODE_PID = 29761
+# variable set hash-table stats:
+# Load=128/1024=12%, Rehash=0, Collisions=5/151=3%
+
+# Pattern-specific Variable Values
+
+# No pattern-specific variable values.
+
+# Directories
+
+# . (device 16777230, inode 1091033): 21 files, no impossibilities.
+
+# 21 files, no impossibilities in 1 directories.
+
+# Implicit Rules
+
+# No implicit rules.
+
+# Files
+
+# Not a target:
+all:
+#  Command-line target.
+#  Implicit rule search has been done.
+#  File does not exist.
+#  File has not been updated.
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/0=0%
+
+.PHONY: build
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.SUFFIXES:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+Makefile:
+#  Implicit rule search has been done.
+#  Last modified 2022-06-09 14:31:23
+#  File has been updated.
+#  Successfully updated.
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/0=0%
+
+build:
+#  Phony target (prerequisite of .PHONY).
+#  Implicit rule search has not been done.
+#  File does not exist.
+#  File has not been updated.
+#  commands to execute (from `Makefile', line 7):
+	@go build -o bin/traffic ./traffic
+	@go build -o bin/server ./example/server
+	@go build -o bin/example ./example/alarm
+	
+
+sync:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `Makefile', line 12):
+	@scp bin/example devserver2:~/netsdk/bin
+	@scp bin/server  devserver2:~/netsdk/bin
+	@scp bin/traffic devserver2:~/netsdk/bin
+	
+
+dev:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `Makefile', line 4):
+	@docker run -it -v $(shell pwd):/go/src -p 7001:7000 dahua-netsdk2:dev bash
+	
+
+# Not a target:
+.DEFAULT:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+dbuild:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `Makefile', line 17):
+	# @docker build -t dahua-netsdk2:dev .
+	@docker buildx build --platform=linux/amd64 -t dahua-netsdk2:dev .
+	
+
+# files hash-table stats:
+# Load=9/1024=1%, Rehash=0, Collisions=0/22=0%
+# VPATH Search Paths
+
+# No `vpath' search paths.
+
+# No general (`VPATH' variable) search path.
+
+# # of strings in strcache: 1
+# # of strcache buffers: 1
+# strcache size: total = 4096 / max = 4096 / min = 4096 / avg = 4096
+# strcache free: total = 4087 / max = 4087 / min = 4087 / avg = 4087
+
+# Finished Make data base on Thu Sep 14 11:48:14 2023
+
+ 

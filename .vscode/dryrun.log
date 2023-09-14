@@ -1,0 +1,5 @@
+make --dry-run --always-make --keep-going --print-directory
+make: Entering directory `/Users/hysios/Projects/cspdls/dhnetsdk2'
+docker run -it -v /Users/hysios/Projects/cspdls/dhnetsdk2:/go/src -p 7001:7000 dahua-netsdk2:dev bash
+make: Leaving directory `/Users/hysios/Projects/cspdls/dhnetsdk2'
+ 

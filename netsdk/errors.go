@@ -940,3 +940,7 @@ func LoginErr(code int) error {
 	}
 	return nil
 }
+
+func ErrLast() error {
+	return Err(int(C.CLIENT_GetLastError()))
+}

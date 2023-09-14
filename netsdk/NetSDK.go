@@ -629,3 +629,4 @@ func ResponseDevReg(sn string, ip string, port int) error {
 	return errors.New("response error")
 	// panic("nonimplement")
 }
+

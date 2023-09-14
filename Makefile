@@ -1,7 +1,7 @@
 .PHONY: build	
 
 dev:
-	@docker run -it -v $(shell pwd):/go/src -p 7000:7000 dahua-netsdk2:dev bash
+	@docker run -it -v $(shell pwd):/go/src -p 7001:7000 dahua-netsdk2:dev bash
 
 build:
 	@go build -o bin/traffic ./traffic
@@ -14,4 +14,5 @@ sync:
 	@scp bin/traffic devserver2:~/netsdk/bin
 	
 dbuild:
-	@docker build -t dahua-netsdk2:dev .
+	# @docker build -t dahua-netsdk2:dev .
+	@docker buildx build --platform=linux/amd64 -t dahua-netsdk2:dev .
